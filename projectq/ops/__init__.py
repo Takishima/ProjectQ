@@ -35,7 +35,8 @@ from ._qubit_operator import QubitOperator
 from ._shortcuts import *
 from ._time_evolution import TimeEvolution
 from ._uniformly_controlled_rotation import (UniformlyControlledRy,
-                                             UniformlyControlledRz)
+                                             UniformlyControlledRz,
+                                             DiagonalGate)
 from ._state_prep import StatePreparation
 from ._qpegate import QPE
 from ._qaagate import QAA

@@ -13,8 +13,10 @@
 #   limitations under the License.
 
 import math
+import cmath
 
-from ._basics import ANGLE_PRECISION, ANGLE_TOLERANCE, BasicGate, NotMergeable
+from ._basics import (ATOL, ANGLE_PRECISION, ANGLE_TOLERANCE, BasicGate,
+                      NotMergeable)
 
 
 class UniformlyControlledRy(BasicGate):
@@ -60,8 +62,10 @@ class UniformlyControlledRy(BasicGate):
 
     def get_merged(self, other):
         if isinstance(other, self.__class__):
-            new_angles = [angle1 + angle2 for (angle1, angle2) in
-                          zip(self.angles, other.angles)]
+            new_angles = [
+                angle1 + angle2
+                for (angle1, angle2) in zip(self.angles, other.angles)
+            ]
             return self.__class__(new_angles)
         raise NotMergeable()
 
@@ -125,8 +129,10 @@ class UniformlyControlledRz(BasicGate):
 
     def get_merged(self, other):
         if isinstance(other, self.__class__):
-            new_angles = [angle1 + angle2 for (angle1, angle2) in
-                          zip(self.angles, other.angles)]
+            new_angles = [
+                angle1 + angle2
+                for (angle1, angle2) in zip(self.angles, other.angles)
+            ]
             return self.__class__(new_angles)
         raise NotMergeable()
 
@@ -137,6 +143,60 @@ class UniformlyControlledRz(BasicGate):
         """ Return True if same class, same rotation angles."""
         if isinstance(other, self.__class__):
             return self.angles == other.angles
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(str(self))
+
+
+class DiagonalGate(BasicGate):
+    """
+    Implement a diagonal gate defined by 2^k diagonal entries
+    (k number of qubits)
+
+    .. note::
+
+      Decomposition of the diagonal gate follows theorem 7 from
+      "Synthesis of Quantum Logic Circuits" by Shende et al.
+      (https://arxiv.org/pdf/quant-ph/0406176.pdf).
+    """
+    def __init__(self, diag):
+        BasicGate.__init__(self)
+        num_qubits = len(diag)
+        if not (num_qubits > 1 and not (num_qubits & (num_qubits - 1))):
+            raise RuntimeError(
+                "Number of diagonal entries must be a power of 2!")
+
+        self.diag = []
+        for d in diag:
+            if abs(d) - 1 > ATOL:
+                raise ValueError(
+                    "The absolute value of all diagonal entries must be 1!")
+            self.diag.append(cmath.phase(d))
+
+    def get_inverse(self):
+        return self.__class__([cmath.exp(-1j * d) for d in self.diag])
+
+    def get_merged(self, other):
+        if isinstance(other, self.__class__):
+            return self.__class__([
+                cmath.exp(1j * (d1 + d2))
+                for (d1, d2) in zip(self.diag, other.diag)
+            ])
+        raise NotMergeable()
+
+    def __str__(self):
+        return "DiagonalGate(" + str([cmath.exp(1j * d)
+                                      for d in self.diag]) + ")"
+
+    def __eq__(self, other):
+        """ Return True if same class, same diagonal entries."""
+        if isinstance(other, self.__class__):
+            return self.diag == other.diag
         else:
             return False
 

@@ -52,6 +52,7 @@ The operations collection consists of various default gates and is a work-in-pro
 	projectq.ops.TimeEvolution
 	projectq.ops.UniformlyControlledRy
 	projectq.ops.UniformlyControlledRz
+	projectq.ops.DiagonalGate
 	projectq.ops.StatePreparation
 	projectq.ops.QPE
 	projectq.ops.FlipBits
