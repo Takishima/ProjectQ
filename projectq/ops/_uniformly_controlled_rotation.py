@@ -19,7 +19,52 @@ from ._basics import (ATOL, ANGLE_PRECISION, ANGLE_TOLERANCE, BasicGate,
                       NotMergeable)
 
 
-class UniformlyControlledRy(BasicGate):
+class UniformlyControlledRot(BasicGate):
+    def __init__(self, axis, angles):
+        BasicGate.__init__(self)
+
+        assert axis in 'YZ'
+        self.axis = axis
+
+        rounded_angles = []
+        for angle in angles:
+            new_angle = round(float(angle) % (4. * math.pi), ANGLE_PRECISION)
+            if new_angle > 4 * math.pi - ANGLE_TOLERANCE:
+                new_angle = 0.
+            rounded_angles.append(new_angle)
+        self.angles = rounded_angles
+
+    def get_inverse(self):
+        return self.__class__([-1 * angle for angle in self.angles])
+
+    def get_merged(self, other):
+        if isinstance(other, self.__class__):
+            new_angles = [
+                angle1 + angle2
+                for (angle1, angle2) in zip(self.angles, other.angles)
+            ]
+            return self.__class__(new_angles)
+        raise NotMergeable()
+
+    def __str__(self):
+        return "UniformlyControlledRot(" + self.axis + ", " + str(
+            self.angles) + ")"
+
+    def __eq__(self, other):
+        """ Return True if same class, same rotation angles."""
+        if isinstance(other, self.__class__):
+            return self.angles == other.angles
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(str(self))
+
+
+class UniformlyControlledRy(UniformlyControlledRot):
     """
     Uniformly controlled Ry gate as introduced in arXiv:quant-ph/0312218.
 
@@ -48,45 +93,10 @@ class UniformlyControlledRy(BasicGate):
                              k.
     """
     def __init__(self, angles):
-        BasicGate.__init__(self)
-        rounded_angles = []
-        for angle in angles:
-            new_angle = round(float(angle) % (4. * math.pi), ANGLE_PRECISION)
-            if new_angle > 4 * math.pi - ANGLE_TOLERANCE:
-                new_angle = 0.
-            rounded_angles.append(new_angle)
-        self.angles = rounded_angles
-
-    def get_inverse(self):
-        return self.__class__([-1 * angle for angle in self.angles])
-
-    def get_merged(self, other):
-        if isinstance(other, self.__class__):
-            new_angles = [
-                angle1 + angle2
-                for (angle1, angle2) in zip(self.angles, other.angles)
-            ]
-            return self.__class__(new_angles)
-        raise NotMergeable()
-
-    def __str__(self):
-        return "UniformlyControlledRy(" + str(self.angles) + ")"
-
-    def __eq__(self, other):
-        """ Return True if same class, same rotation angles."""
-        if isinstance(other, self.__class__):
-            return self.angles == other.angles
-        else:
-            return False
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __hash__(self):
-        return hash(str(self))
+        UniformlyControlledRot.__init__(self, 'Y', angles)
 
 
-class UniformlyControlledRz(BasicGate):
+class UniformlyControlledRz(UniformlyControlledRot):
     """
     Uniformly controlled Rz gate as introduced in arXiv:quant-ph/0312218.
 
@@ -115,42 +125,7 @@ class UniformlyControlledRz(BasicGate):
                              k.
     """
     def __init__(self, angles):
-        BasicGate.__init__(self)
-        rounded_angles = []
-        for angle in angles:
-            new_angle = round(float(angle) % (4. * math.pi), ANGLE_PRECISION)
-            if new_angle > 4 * math.pi - ANGLE_TOLERANCE:
-                new_angle = 0.
-            rounded_angles.append(new_angle)
-        self.angles = rounded_angles
-
-    def get_inverse(self):
-        return self.__class__([-1 * angle for angle in self.angles])
-
-    def get_merged(self, other):
-        if isinstance(other, self.__class__):
-            new_angles = [
-                angle1 + angle2
-                for (angle1, angle2) in zip(self.angles, other.angles)
-            ]
-            return self.__class__(new_angles)
-        raise NotMergeable()
-
-    def __str__(self):
-        return "UniformlyControlledRz(" + str(self.angles) + ")"
-
-    def __eq__(self, other):
-        """ Return True if same class, same rotation angles."""
-        if isinstance(other, self.__class__):
-            return self.angles == other.angles
-        else:
-            return False
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __hash__(self):
-        return hash(str(self))
+        UniformlyControlledRot.__init__(self, 'Z', angles)
 
 
 class DiagonalGate(BasicGate):
