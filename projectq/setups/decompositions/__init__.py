@@ -12,13 +12,13 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from pathlib import Path
+import os
 import pkgutil
 import sys
 from importlib import import_module
 
 all_defined_decomposition_rules = []
-for (_, name, _) in pkgutil.iter_modules([Path(__file__).parent]):
+for (_, name, _) in pkgutil.iter_modules([os.path.dirname(__file__)]):
     if name.endswith('test'):
         continue
     imported_module = import_module('.' + name, package=__name__)
