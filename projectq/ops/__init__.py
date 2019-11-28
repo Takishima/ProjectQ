@@ -12,31 +12,44 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from ._basics import (NotMergeable,
-                      NotInvertible,
-                      BasicGate,
-                      MatrixGate,
-                      SelfInverseGate,
-                      BasicRotationGate,
-                      ClassicalInstructionGate,
-                      FastForwardingGate,
-                      BasicMathGate,
-                      BasicPhaseGate)
-from ._command import apply_command, Command
-from ._metagates import (DaggeredGate,
-                         get_inverse,
-                         is_identity,
-                         ControlledGate,
-                         C,
-                         Tensor,
-                         All)
-from ._gates import *
-from ._qftgate import QFT, QFTGate
-from ._qubit_operator import QubitOperator
-from ._shortcuts import *
-from ._time_evolution import TimeEvolution
-from ._uniformly_controlled_rotation import (UniformlyControlledRy,
-                                             UniformlyControlledRz)
-from ._state_prep import StatePreparation
-from ._qpegate import QPE
-from ._qaagate import QAA
+from pathlib import Path
+import sys
+import inspect
+import pkgutil
+from importlib import import_module
+
+from ._basics import BasicGate
+
+
+def dynamic_import(name):
+    imported_module = import_module('.' + name, package=__name__)
+
+    for i in dir(imported_module):
+        attribute = getattr(imported_module, i)
+
+        if (not hasattr(sys.modules[__name__], i) and
+            (inspect.isclass(attribute) and issubclass(attribute,
+                                                       (BasicGate, Exception))
+             or isinstance(attribute, BasicGate))):
+            setattr(sys.modules[__name__], i, attribute)
+
+        if i == 'all_defined_symbols':
+            for symbol in attribute:
+                if not hasattr(sys.modules[__name__], symbol.__name__):
+                    setattr(sys.modules[__name__], symbol.__name__, symbol)
+
+
+_failed_list = []
+for (_, name, _) in pkgutil.iter_modules([Path(__file__).parent]):
+    if name.endswith('test'):
+        continue
+    try:
+        dynamic_import(name)
+    except ImportError:
+        _failed_list.append(name)
+
+for name in _failed_list:
+    dynamic_import(name)
+
+# Allow extending this namespace.
+__path__ = pkgutil.extend_path(__path__, __name__)

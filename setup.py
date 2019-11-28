@@ -36,11 +36,11 @@
 # IN THE SOFTWARE.
 
 from __future__ import print_function
-from setuptools import setup, Extension, find_packages
 from distutils.errors import (CompileError, LinkError, CCompilerError,
                               DistutilsExecError, DistutilsPlatformError)
-from setuptools import Distribution as _Distribution
+import setuptools
 from setuptools.command.build_ext import build_ext
+import inspect
 import sys
 import os
 import subprocess
@@ -164,6 +164,17 @@ class BuildFailed(Exception):
 
 
 # ------------------------------------------------------------------------------
+
+
+if not hasattr(setuptools, 'find_namespace_packages') or not inspect.ismethod(
+        setuptools.find_namespace_packages):
+    raise RuntimeError('Your setuptools version ({}) does not support PEP420'
+                       ' (find_namespace_packages). Please upgrade it at '
+                       'least to version >= 40.1.0'.format(
+                           setuptools.__version__))
+
+
+# ------------------------------------------------------------------------------
 # Python build related variable
 
 cpython = platform.python_implementation() == 'CPython'
@@ -190,7 +201,7 @@ requirements = [r.strip() for r in requirements]
 # ProjectQ C++ extensions
 
 ext_modules = [
-    Extension(
+    setuptools.Extension(
         'projectq.backends._sim._cppsim',
         ['projectq/backends/_sim/_cppsim.cpp'],
         include_dirs=[
@@ -390,7 +401,7 @@ class BuildExt(build_ext):
         raise BuildFailed()
 
 
-class Distribution(_Distribution):
+class Distribution(setuptools.Distribution):
     def has_ext_modules(self):
         # We want to always claim that we have ext_modules. This will be fine
         # if we don't actually have them (such as on PyPy) because nothing
@@ -411,27 +422,27 @@ def run_setup(with_cext):
     else:
         kwargs['ext_modules'] = []
 
-    setup(name='projectq',
-          version=__version__,
-          author='ProjectQ',
-          author_email='info@projectq.ch',
-          url='http://www.projectq.ch',
-          project_urls={
-              'Documentation': 'https://projectq.readthedocs.io/en/latest/',
-              'Issue Tracker':
-              'https://github.com/ProjectQ-Framework/ProjectQ/',
-          },
-          description=(
-              'ProjectQ - '
-              'An open source software framework for quantum computing'),
-          long_description=long_description,
-          install_requires=requirements,
-          cmdclass={'build_ext': BuildExt},
-          zip_safe=False,
-          license='Apache 2',
-          packages=find_packages(),
-          distclass=Distribution,
-          **kwargs)
+    setuptools.setup(
+        name='projectq',
+        version=__version__,
+        author='ProjectQ',
+        author_email='info@projectq.ch',
+        url='http://www.projectq.ch',
+        project_urls={
+            'Documentation': 'https://projectq.readthedocs.io/en/latest/',
+            'Issue Tracker':
+            'https://github.com/ProjectQ-Framework/ProjectQ/',
+        },
+        description=('ProjectQ - An open source software framework for '
+                     'quantum computing'),
+        long_description=long_description,
+        install_requires=requirements,
+        cmdclass={'build_ext': BuildExt},
+        zip_safe=False,
+        license='Apache 2',
+        packages=setuptools.find_namespace_packages(include=['projectq.*']),
+        distclass=Distribution,
+        **kwargs)
 
 
 # ==============================================================================
