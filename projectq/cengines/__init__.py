@@ -29,7 +29,8 @@ def dynamic_import(name):
 
         if (inspect.isclass(attribute) and issubclass(attribute,
                                                       (BasicEngine, Exception))
-                and not hasattr(sys.modules[__name__], i)):
+                and not hasattr(sys.modules[__name__], i)
+                and __name__ in attribute.__module__):
             setattr(sys.modules[__name__], i, attribute)
 
         if i == 'all_defined_symbols':

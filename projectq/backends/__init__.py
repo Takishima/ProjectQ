@@ -31,7 +31,7 @@ import inspect
 import pkgutil
 from importlib import import_module
 
-from projectq.cengines import BasicEngine
+import projectq.cengines
 
 for (_, name, _) in pkgutil.iter_modules([Path(__file__).parent]):
     if name.endswith('test'):
@@ -40,8 +40,10 @@ for (_, name, _) in pkgutil.iter_modules([Path(__file__).parent]):
     imported_module = import_module('.' + name, package=__name__)
     for i in dir(imported_module):
         attribute = getattr(imported_module, i)
-        if (inspect.isclass(attribute) and issubclass(attribute, BasicEngine)
-                and not hasattr(sys.modules[__name__], i)):
+        if (inspect.isclass(attribute)
+                and issubclass(attribute, projectq.cengines.BasicEngine)
+                and not hasattr(sys.modules[__name__], i)
+                and __name__ in attribute.__module__):
             setattr(sys.modules[__name__], i, attribute)
 
 # Allow extending this namespace.
