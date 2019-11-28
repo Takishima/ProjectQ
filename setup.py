@@ -1,9 +1,15 @@
-from setuptools import setup, Extension, find_packages, Feature
-from setuptools.command.build_ext import build_ext
-import sys
+import inspect
 import os
+import sys
 import setuptools
+from setuptools.command.build_ext import build_ext
 
+if not hasattr(setuptools, 'find_namespace_packages') or not inspect.ismethod(
+        setuptools.find_namespace_packages):
+    raise RuntimeError('Your setuptools version ({}) does not support PEP420'
+                       ' (find_namespace_packages). Please upgrade it at '
+                       'least to version >= 40.1.0'.format(
+                           setuptools.__version__))
 
 # This reads the __version__ variable from projectq/_version.py
 exec(open('projectq/_version.py').read())
@@ -23,7 +29,6 @@ class get_pybind_include(object):
     The purpose of this class is to postpone importing pybind11
     until it is actually installed, so that the ``get_include()``
     method can be invoked. """
-
     def __init__(self, user=False):
         self.user = user
 
@@ -32,11 +37,11 @@ class get_pybind_include(object):
         return pybind11.get_include(self.user)
 
 
-cppsim = Feature(
+cppsim = setuptools.Feature(
     'C++ Simulator',
     standard=True,
     ext_modules=[
-        Extension(
+        setuptools.Extension(
             'projectq.backends._sim._cppsim',
             ['projectq/backends/_sim/_cppsim.cpp'],
             include_dirs=[
@@ -44,8 +49,7 @@ cppsim = Feature(
                 get_pybind_include(),
                 get_pybind_include(user=True)
             ],
-            language='c++'
-        ),
+            language='c++'),
     ],
 )
 
@@ -155,7 +159,7 @@ class BuildExt(build_ext):
                         "building the (faster) C++ version of the simulator.")
 
 
-setup(
+setuptools.setup(
     name='projectq',
     version=__version__,
     author='ProjectQ',
@@ -169,5 +173,4 @@ setup(
     cmdclass={'build_ext': BuildExt},
     zip_safe=False,
     license='Apache 2',
-    packages=find_packages()
-)
+    packages=setuptools.find_namespace_packages(include=['projectq.*']))

@@ -315,3 +315,6 @@ class Command(object):
             qstring = qstring[:-2] + " )"
         cstring = "C" * len(ctrlqubits)
         return cstring + str(self.gate) + " | " + qstring
+
+
+all_defined_symbols = [apply_command, Command]

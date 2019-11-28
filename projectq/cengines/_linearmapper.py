@@ -639,3 +639,7 @@ class LinearMapper(BasicMapperEngine):
             # Storage is full: Create new map and send some gates away:
             if len(self._stored_commands) >= self.storage:
                 self._run()
+
+
+#: Symbols to automatically export
+all_defined_symbols = [return_swap_depth]

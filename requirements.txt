@@ -5,3 +5,4 @@ pybind11>=2.2.3
 requests
 scipy
 networkx
+setuptools>=40.1.0

@@ -17,3 +17,7 @@ from ._decomposition_rule_set import DecompositionRuleSet
 from ._replacer import (AutoReplacer,
                         InstructionFilter,
                         NoGateDecompositionError)
+
+
+#: Symbols to automatically export
+all_defined_symbols = [DecompositionRule, DecompositionRuleSet]

@@ -302,3 +302,7 @@ class MainEngine(BasicEngine):
                 qb = self.active_qubits.pop()
                 qb.__del__()
         self.receive([Command(self, FlushGate(), ([WeakQubitRef(self, -1)],))])
+
+
+#: Symbols to automatically export
+all_defined_symbols = [NotYetMeasuredError, UnsupportedEngineError]

@@ -37,3 +37,6 @@ CZ = C(Z)
 
 
 Toffoli = C(CNOT)
+
+
+all_defined_symbols = [CRz]
