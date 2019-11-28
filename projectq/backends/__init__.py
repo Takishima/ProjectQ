@@ -25,7 +25,7 @@ This includes:
 * an interface to the IBM Quantum Experience chip (and simulator).
 """
 
-from pathlib import Path
+import os
 import sys
 import inspect
 import pkgutil
@@ -33,7 +33,7 @@ from importlib import import_module
 
 import projectq.cengines
 
-for (_, name, _) in pkgutil.iter_modules([Path(__file__).parent]):
+for (_, name, _) in pkgutil.iter_modules([os.path.dirname(__file__)]):
     if name.endswith('test'):
         continue
 

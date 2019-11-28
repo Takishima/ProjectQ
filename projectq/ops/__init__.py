@@ -12,7 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from pathlib import Path
+import os
 import sys
 import inspect
 import pkgutil
@@ -30,7 +30,8 @@ def dynamic_import(name):
         if (not hasattr(sys.modules[__name__], i) and
             (inspect.isclass(attribute) and issubclass(attribute,
                                                        (BasicGate, Exception))
-             or isinstance(attribute, BasicGate))):
+             or isinstance(attribute, BasicGate))
+                and __name__ in attribute.__module__):
             setattr(sys.modules[__name__], i, attribute)
 
         if i == 'all_defined_symbols':
@@ -40,7 +41,7 @@ def dynamic_import(name):
 
 
 _failed_list = []
-for (_, name, _) in pkgutil.iter_modules([Path(__file__).parent]):
+for (_, name, _) in pkgutil.iter_modules([os.path.dirname(__file__)]):
     if name.endswith('test'):
         continue
     try:
