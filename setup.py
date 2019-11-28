@@ -440,7 +440,7 @@ def run_setup(with_cext):
         cmdclass={'build_ext': BuildExt},
         zip_safe=False,
         license='Apache 2',
-        packages=setuptools.find_namespace_packages(include=['projectq.*']),
+        packages=setuptools.find_namespace_packages(include=['projectq*']),
         distclass=Distribution,
         **kwargs)
 
