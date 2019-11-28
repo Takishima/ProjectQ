@@ -12,7 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from pathlib import Path
+import os
 import sys
 import inspect
 import pkgutil
@@ -46,7 +46,7 @@ for name in _priority_modules:
     dynamic_import(name)
 
 _failed_list = []
-for (_, name, _) in pkgutil.iter_modules([Path(__file__).parent]):
+for (_, name, _) in pkgutil.iter_modules([os.path.dirname(__file__)]):
     if name.endswith('test') or name in _priority_modules:
         continue
     try:
