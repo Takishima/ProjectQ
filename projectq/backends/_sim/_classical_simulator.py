@@ -180,9 +180,7 @@ class ClassicalSimulator(BasicEngine):
         return (cmd.gate == Measure or
                 cmd.gate == Allocate or
                 cmd.gate == Deallocate or
-                isinstance(cmd.gate, BasicMathGate) or
-                isinstance(cmd.gate, FlushGate) or
-                isinstance(cmd.gate, XGate))
+                isinstance(cmd.gate, (BasicMathGate, FlushGate, XGate)))
 
     def receive(self, command_list):
         for cmd in command_list:

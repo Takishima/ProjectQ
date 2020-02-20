@@ -186,10 +186,7 @@ class GridMapper(BasicMapperEngine):
         num_qubits = 0
         for qureg in cmd.all_qubits:
             num_qubits += len(qureg)
-        if num_qubits <= 2:
-            return True
-        else:
-            return False
+        return (num_qubits <= 2)
 
     def _return_new_mapping(self):
         """

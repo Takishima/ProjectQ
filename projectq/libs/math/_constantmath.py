@@ -51,7 +51,7 @@ def add_constant_modN(eng, c, N, quint):
     using Draper addition and the construction from
     https://arxiv.org/abs/quant-ph/0205095.
     """
-    assert(c < N and c >= 0)
+    assert(0 <= c < N)
 
     AddConstant(c) | quint
 
@@ -84,7 +84,7 @@ def mul_by_constant_modN(eng, c, N, quint_in):
     (only works if a and N are relative primes, otherwise the modular inverse
     does not exist).
     """
-    assert(c < N and c >= 0)
+    assert(0 <= c < N)
     assert(gcd(c, N) == 1)
 
     n = len(quint_in)

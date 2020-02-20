@@ -31,31 +31,8 @@ import projectq.setups.decompositions
 from projectq.cengines import (AutoReplacer, DecompositionRuleSet,
                                InstructionFilter, GridMapper,
                                LocalOptimizer, TagRemover)
-from projectq.ops import (BasicMathGate, ClassicalInstructionGate, CNOT,
-                          ControlledGate, get_inverse, QFT, Swap)
-
-
-def high_level_gates(eng, cmd):
-    """
-    Remove any MathGates.
-    """
-    g = cmd.gate
-    if g == QFT or get_inverse(g) == QFT or g == Swap:
-        return True
-    elif isinstance(g, BasicMathGate):
-        return False
-    return True
-
-
-def one_and_two_qubit_gates(eng, cmd):
-    all_qubits = [q for qr in cmd.all_qubits for q in qr]
-    if isinstance(cmd.gate, ClassicalInstructionGate):
-        # This is required to allow Measure, Allocate, Deallocate, Flush
-        return True
-    elif len(all_qubits) <= 2:
-        return True
-    else:
-        return False
+from projectq.ops import (ClassicalInstructionGate, CNOT, ControlledGate, Swap)
+from .linear import high_level_gates, one_and_two_qubit_gates
 
 
 def get_engine_list(num_rows, num_columns, one_qubit_gates="any",

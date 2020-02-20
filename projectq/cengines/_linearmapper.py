@@ -115,10 +115,7 @@ class LinearMapper(BasicMapperEngine):
         num_qubits = 0
         for qureg in cmd.all_qubits:
             num_qubits += len(qureg)
-        if num_qubits <= 2:
-            return True
-        else:
-            return False
+        return (num_qubits <= 2)
 
     @staticmethod
     def return_new_mapping(num_qubits, cyclic, currently_allocated_ids,
@@ -529,7 +526,7 @@ class LinearMapper(BasicMapperEngine):
                     mapped_ids = list(mapped_ids)
                     diff = abs(mapped_ids[0]-mapped_ids[1])
                     if self.cyclic:
-                        if diff != 1 and diff != self.num_qubits-1:
+                        if diff not in (1, self.num_qubits - 1):
                             send_gate = False
                     else:
                         if diff != 1:

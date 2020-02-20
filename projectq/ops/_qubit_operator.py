@@ -472,8 +472,7 @@ class QubitOperator(BasicGate):
         Raises:
             TypeError: Invalid type cannot be multiply with QubitOperator.
         """
-        if (isinstance(multiplier, (int, float, complex)) or
-                isinstance(multiplier, QubitOperator)):
+        if isinstance(multiplier, (int, float, complex, QubitOperator)):
             product = copy.deepcopy(self)
             product *= multiplier
             return product

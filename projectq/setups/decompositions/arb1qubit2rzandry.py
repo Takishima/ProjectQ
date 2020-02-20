@@ -51,11 +51,8 @@ def _recognize_arb1qubit(cmd):
     """
     try:
         m = cmd.gate.matrix
-        if len(m) == 2 and get_control_count(cmd) == 0:
-            return True
-        else:
-            return False
-    except:
+        return (len(m) == 2 and get_control_count(cmd) == 0)
+    except AttributeError:
         return False
 
 

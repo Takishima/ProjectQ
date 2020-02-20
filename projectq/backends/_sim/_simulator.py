@@ -98,8 +98,7 @@ class Simulator(BasicEngine):
         """
         if (cmd.gate == Measure or cmd.gate == Allocate or
                 cmd.gate == Deallocate or
-                isinstance(cmd.gate, BasicMathGate) or
-                isinstance(cmd.gate, TimeEvolution)):
+                isinstance(cmd.gate, (BasicMathGate, TimeEvolution))):
             return True
         try:
             m = cmd.gate.matrix

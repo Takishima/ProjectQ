@@ -48,14 +48,10 @@ def high_level_gates(eng, cmd):
 
 
 def one_and_two_qubit_gates(eng, cmd):
-    all_qubits = [q for qr in cmd.all_qubits for q in qr]
     if isinstance(cmd.gate, ClassicalInstructionGate):
         # This is required to allow Measure, Allocate, Deallocate, Flush
         return True
-    elif len(all_qubits) <= 2:
-        return True
-    else:
-        return False
+    return len([q for qr in cmd.all_qubits for q in qr]) <= 2
 
 
 def get_engine_list(num_qubits, cyclic=False, one_qubit_gates="any",

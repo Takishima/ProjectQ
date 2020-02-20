@@ -85,7 +85,7 @@ class CommandPrinter(BasicEngine):
                 for qubit in qureg:
                     if self._accept_input:
                         m = None
-                        while m != '0' and m != '1' and m != 1 and m != 0:
+                        while m not in ('0', '1', 1, 0):
                             prompt = ("Input measurement result (0 or 1) for"
                                       " qubit " + str(qubit) + ": ")
                             m = input(prompt)
