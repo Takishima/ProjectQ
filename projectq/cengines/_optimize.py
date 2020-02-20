@@ -122,11 +122,9 @@ class LocalOptimizer(BasicEngine):
         """
         # loop over all qubit indices
         i = 0
-        new_gateloc = 0
         limit = len(self._l[idx])
         if lim is not None:
             limit = lim
-            new_gateloc = limit
 
         while i < limit - 1:
             # can be dropped if the gate is equivalent to an identity gate
