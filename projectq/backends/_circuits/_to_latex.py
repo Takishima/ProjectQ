@@ -416,7 +416,7 @@ class _Circ2Tikz(object):
                 xpos = self.pos[line]
                 try:
                     if (self.settings['gates']['AllocateQubitGate']
-                        ['allocate_at_zero']):
+                            ['allocate_at_zero']):
                         self.pos[line] -= self._gate_pre_offset(gate)
                         xpos = self._gate_pre_offset(gate)
                 except KeyError:
@@ -452,9 +452,9 @@ class _Circ2Tikz(object):
                 tikz_code.append(connections)
 
             if not draw_gates_in_parallel:
-                for l in range(len(self.pos)):
-                    if l != line:
-                        self.pos[l] = self.pos[line]
+                for idx in range(len(self.pos)):
+                    if idx != line:
+                        self.pos[idx] = self.pos[line]
 
         circuit[line] = circuit[line][end:]
         return "".join(tikz_code)

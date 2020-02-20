@@ -115,7 +115,8 @@ class LocalOptimizer(BasicEngine):
 
     def _optimize(self, idx, lim=None):
         """
-        Try to remove identity gates using the is_identity function, then merge or even cancel successive gates using the get_merged and
+        Try to remove identity gates using the is_identity function, then
+        merge or even cancel successive gates using the get_merged and
         get_inverse functions of the gate (see, e.g., BasicRotationGate).
 
         It does so for all qubit command lists.
@@ -135,7 +136,7 @@ class LocalOptimizer(BasicEngine):
                 gid = self._get_gate_indices(idx, i, qubitids)
                 for j in range(len(qubitids)):
                     new_list = (self._l[qubitids[j]][0:gid[j]] +
-                                self._l[qubitids[j]][gid[j] +1:])
+                                self._l[qubitids[j]][gid[j] + 1:])
                 self._l[qubitids[j]] = new_list
                 i = 0
                 limit -= 1

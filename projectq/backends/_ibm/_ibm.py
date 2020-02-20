@@ -11,29 +11,14 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
 """ Back-end to run quantum program on IBM's Quantum Experience."""
 import math
 import random
 
 from projectq.cengines import BasicEngine
 from projectq.meta import get_control_count, LogicalQubitIDTag
-from projectq.ops import (NOT,
-                          Y,
-                          Z,
-                          T,
-                          Tdag,
-                          S,
-                          Sdag,
-                          H,
-                          Rx,
-                          Ry,
-                          Rz,
-                          Measure,
-                          Allocate,
-                          Deallocate,
-                          Barrier,
-                          FlushGate)
+from projectq.ops import (NOT, H, Rx, Ry, Rz, Measure, Allocate, Deallocate,
+                          Barrier, FlushGate)
 
 from ._ibm_http_client import send, retrieve
 
@@ -43,9 +28,14 @@ class IBMBackend(BasicEngine):
     The IBM Backend class, which stores the circuit, transforms it to JSON,
     and sends the circuit through the IBM API.
     """
-    def __init__(self, use_hardware=False, num_runs=1024, verbose=False,
-                 token='', device='ibmq_essex',
-                 num_retries=3000, interval=1,
+    def __init__(self,
+                 use_hardware=False,
+                 num_runs=1024,
+                 verbose=False,
+                 token='',
+                 device='ibmq_essex',
+                 num_retries=3000,
+                 interval=1,
                  retrieve_execution=None):
         """
         Initialize the Backend object.
@@ -167,24 +157,40 @@ class IBMBackend(BasicEngine):
         elif isinstance(gate, (Rx, Ry, Rz)):
             assert get_control_count(cmd) == 0
             qb_pos = cmd.qubits[0][0].id
-            u_strs = {'Rx': 'u3({}, -pi/2, pi/2)', 'Ry': 'u3({}, 0, 0)',
-                      'Rz': 'u1({})'}
-            u_name = {'Rx': 'u3', 'Ry': 'u3',
-                      'Rz': 'u1'}
-            u_angle = {'Rx': [gate.angle, -math.pi/2, math.pi/2], 'Ry': [gate.angle, 0, 0],
-                      'Rz': [gate.angle]}
+            u_strs = {
+                'Rx': 'u3({}, -pi/2, pi/2)',
+                'Ry': 'u3({}, 0, 0)',
+                'Rz': 'u1({})'
+            }
+            u_name = {'Rx': 'u3', 'Ry': 'u3', 'Rz': 'u1'}
+            u_angle = {
+                'Rx': [gate.angle, -math.pi / 2, math.pi / 2],
+                'Ry': [gate.angle, 0, 0],
+                'Rz': [gate.angle]
+            }
             gate_qasm = u_strs[str(gate)[0:2]].format(gate.angle)
             gate_name = u_name[str(gate)[0:2]]
             params = u_angle[str(gate)[0:2]]
             self.qasm += "\n{} q[{}];".format(gate_qasm, qb_pos)
-            self._json.append({'qubits': [qb_pos], 'name': gate_name,'params': params})
+            self._json.append({
+                'qubits': [qb_pos],
+                'name': gate_name,
+                'params': params
+            })
         elif gate == H:
             assert get_control_count(cmd) == 0
             qb_pos = cmd.qubits[0][0].id
             self.qasm += "\nu2(0,pi/2) q[{}];".format(qb_pos)
-            self._json.append({'qubits': [qb_pos], 'name': 'u2','params': [0, 3.141592653589793]})
+            self._json.append({
+                'qubits': [qb_pos],
+                'name': 'u2',
+                'params': [0, 3.141592653589793]
+            })
         else:
-            raise Exception('Command not authorized. You should run the circuit with the appropriate ibm setup.')
+            raise Exception(
+                'Command not authorized. You should run the circuit with the '
+                'appropriate ibm setup.'
+            )
 
     def _logical_to_physical(self, qb_id):
         """
@@ -197,10 +203,10 @@ class IBMBackend(BasicEngine):
         assert self.main_engine.mapper is not None
         mapping = self.main_engine.mapper.current_mapping
         if qb_id not in mapping:
-            raise RuntimeError("Unknown qubit id {}. Please make sure "
+            raise RuntimeError(
+                "Unknown qubit id {}. Please make sure "
                 "eng.flush() was called and that the qubit "
-                               "was eliminated during optimization."
-                               .format(qb_id))
+                "was eliminated during optimization.".format(qb_id))
         return mapping[qb_id]
 
     def get_probabilities(self, qureg):
@@ -255,9 +261,12 @@ class IBMBackend(BasicEngine):
         # finally: add measurements (no intermediate measurements are allowed)
         for measured_id in self._measured_ids:
             qb_loc = self.main_engine.mapper.current_mapping[measured_id]
-            self.qasm += "\nmeasure q[{}] -> c[{}];".format(qb_loc,
-                                                            qb_loc)
-            self._json.append({'qubits': [qb_loc], 'name': 'measure','memory':[qb_loc]})
+            self.qasm += "\nmeasure q[{}] -> c[{}];".format(qb_loc, qb_loc)
+            self._json.append({
+                'qubits': [qb_loc],
+                'name': 'measure',
+                'memory': [qb_loc]
+            })
         # return if no operations / measurements have been performed.
         if self.qasm == "":
             return
@@ -271,7 +280,8 @@ class IBMBackend(BasicEngine):
         info['backend'] = {'name': self.device}
         try:
             if self._retrieve_execution is None:
-                res = send(info, device=self.device,
+                res = send(info,
+                           device=self.device,
                            token=self._token,
                            num_retries=self._num_retries,
                            interval=self._interval,
@@ -302,8 +312,7 @@ class IBMBackend(BasicEngine):
                     star = "*"
                 self._probabilities[state] = probability
                 if self._verbose and probability > 0:
-                    print(str(state) + " with p = " + str(probability) +
-                          star)
+                    print(str(state) + " with p = " + str(probability) + star)
 
             class QB():
                 def __init__(self, ID):

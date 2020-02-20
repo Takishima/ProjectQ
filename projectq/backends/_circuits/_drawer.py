@@ -263,8 +263,8 @@ class CircuitDrawer(BasicEngine):
         Args:
             ordered(bool): flag if the gates should be drawn in the order they
                 were added to the circuit
-            draw_gates_in_parallel(bool): flag if parallel gates should be drawn
-                parallel (True), or not (False)
+            draw_gates_in_parallel(bool): flag if parallel gates should be
+                drawn parallel (True), or not (False)
         """
         qubit_lines = dict()
 

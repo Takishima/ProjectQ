@@ -11,7 +11,6 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
 """
 Contains definitions of standard gates such as
 * Hadamard (H)
@@ -56,6 +55,7 @@ from ._command import apply_command
 
 class HGate(SelfInverseGate):
     """ Hadamard gate class """
+
     def __str__(self):
         return "H"
 
@@ -63,12 +63,14 @@ class HGate(SelfInverseGate):
     def matrix(self):
         return 1. / cmath.sqrt(2.) * np.matrix([[1, 1], [1, -1]])
 
+
 #: Shortcut (instance of) :class:`projectq.ops.HGate`
 H = HGate()
 
 
 class XGate(SelfInverseGate):
     """ Pauli-X gate class """
+
     def __str__(self):
         return "X"
 
@@ -76,12 +78,14 @@ class XGate(SelfInverseGate):
     def matrix(self):
         return np.matrix([[0, 1], [1, 0]])
 
+
 #: Shortcut (instance of) :class:`projectq.ops.XGate`
 X = NOT = XGate()
 
 
 class YGate(SelfInverseGate):
     """ Pauli-Y gate class """
+
     def __str__(self):
         return "Y"
 
@@ -89,12 +93,14 @@ class YGate(SelfInverseGate):
     def matrix(self):
         return np.matrix([[0, -1j], [1j, 0]])
 
+
 #: Shortcut (instance of) :class:`projectq.ops.YGate`
 Y = YGate()
 
 
 class ZGate(SelfInverseGate):
     """ Pauli-Z gate class """
+
     def __str__(self):
         return "Z"
 
@@ -102,18 +108,21 @@ class ZGate(SelfInverseGate):
     def matrix(self):
         return np.matrix([[1, 0], [0, -1]])
 
+
 #: Shortcut (instance of) :class:`projectq.ops.ZGate`
 Z = ZGate()
 
 
 class SGate(BasicGate):
     """ S gate class """
+
     @property
     def matrix(self):
         return np.matrix([[1, 0], [0, 1j]])
 
     def __str__(self):
         return "S"
+
 
 #: Shortcut (instance of) :class:`projectq.ops.SGate`
 S = SGate()
@@ -123,12 +132,14 @@ Sdag = Sdagger = get_inverse(S)
 
 class TGate(BasicGate):
     """ T gate class """
+
     @property
     def matrix(self):
         return np.matrix([[1, 0], [0, cmath.exp(1j * cmath.pi / 4)]])
 
     def __str__(self):
         return "T"
+
 
 #: Shortcut (instance of) :class:`projectq.ops.TGate`
 T = TGate()
@@ -138,9 +149,10 @@ Tdag = Tdagger = get_inverse(T)
 
 class SqrtXGate(BasicGate):
     """ Square-root X gate class """
+
     @property
     def matrix(self):
-        return 0.5 * np.matrix([[1+1j, 1-1j], [1-1j, 1+1j]])
+        return 0.5 * np.matrix([[1 + 1j, 1 - 1j], [1 - 1j, 1 + 1j]])
 
     def tex_str(self):
         return r'$\sqrt{X}$'
@@ -148,12 +160,14 @@ class SqrtXGate(BasicGate):
     def __str__(self):
         return "SqrtX"
 
+
 #: Shortcut (instance of) :class:`projectq.ops.SqrtXGate`
 SqrtX = SqrtXGate()
 
 
 class SwapGate(SelfInverseGate):
     """ Swap gate class (swaps 2 qubits) """
+
     def __init__(self):
         SelfInverseGate.__init__(self)
         self.interchangeable_qubit_indices = [[0, 1]]
@@ -168,12 +182,14 @@ class SwapGate(SelfInverseGate):
                           [0, 1, 0, 0],
                           [0, 0, 0, 1]])
 
+
 #: Shortcut (instance of) :class:`projectq.ops.SwapGate`
 Swap = SwapGate()
 
 
 class SqrtSwapGate(BasicGate):
     """ Square-root Swap gate class """
+
     def __init__(self):
         BasicGate.__init__(self)
         self.interchangeable_qubit_indices = [[0, 1]]
@@ -188,6 +204,7 @@ class SqrtSwapGate(BasicGate):
                           [0, 0.5-0.5j, 0.5+0.5j, 0],
                           [0, 0, 0, 1]])
 
+
 #: Shortcut (instance of) :class:`projectq.ops.SqrtSwapGate`
 SqrtSwap = SqrtSwapGate()
 
@@ -197,8 +214,10 @@ class EntangleGate(BasicGate):
     Entangle gate (Hadamard on first qubit, followed by CNOTs applied to all
     other qubits).
     """
+
     def __str__(self):
         return "Entangle"
+
 
 #: Shortcut (instance of) :class:`projectq.ops.EntangleGate`
 Entangle = EntangleGate()
@@ -206,6 +225,7 @@ Entangle = EntangleGate()
 
 class Ph(BasicPhaseGate):
     """ Phase gate (global phase) """
+
     @property
     def matrix(self):
         return np.matrix([[cmath.exp(1j * self.angle), 0],
@@ -214,6 +234,7 @@ class Ph(BasicPhaseGate):
 
 class Rx(BasicRotationGate):
     """ RotationX gate class """
+
     @property
     def matrix(self):
         return np.matrix([[math.cos(0.5 * self.angle),
@@ -234,6 +255,7 @@ class Ry(BasicRotationGate):
 
 class Rz(BasicRotationGate):
     """ RotationZ gate class """
+
     @property
     def matrix(self):
         return np.matrix([[cmath.exp(-.5 * 1j * self.angle), 0],
@@ -244,17 +266,20 @@ class Rxx(BasicRotationGate):
     """ RotationXX gate class """
     @property
     def matrix(self):
-        return np.matrix([[cmath.cos(.5 * self.angle), 0, 0, -1j*cmath.sin(.5 * self.angle)],
+        return np.matrix([
+            [cmath.cos(.5 * self.angle), 0, 0, -1j*cmath.sin(.5 * self.angle)],
             [0, cmath.cos(.5 * self.angle), -1j*cmath.sin(.5 * self.angle), 0],
             [0, -1j*cmath.sin(.5 * self.angle), cmath.cos(.5 * self.angle), 0],
-                          [-1j*cmath.sin(.5 * self.angle), 0, 0, cmath.cos( .5 * self.angle)]])
+            [-1j*cmath.sin(.5 * self.angle), 0, 0, cmath.cos(.5 * self.angle)]
+        ])
 
 
 class Ryy(BasicRotationGate):
     """ RotationYY gate class """
     @property
     def matrix(self):
-        return np.matrix([[cmath.cos(.5 * self.angle), 0, 0, 1j*cmath.sin(.5 * self.angle)],
+        return np.matrix([
+            [cmath.cos(.5*self.angle), 0, 0, 1j*cmath.sin(.5 * self.angle)],
             [0, cmath.cos(.5 * self.angle), -1j*cmath.sin(.5 * self.angle), 0],
             [0, -1j*cmath.sin(.5 * self.angle), cmath.cos(.5 * self.angle), 0],
             [1j*cmath.sin(.5 * self.angle), 0, 0, cmath.cos(.5 * self.angle)]])
@@ -264,7 +289,8 @@ class Rzz(BasicRotationGate):
     """ RotationZZ gate class """
     @property
     def matrix(self):
-        return np.matrix([[cmath.exp(-.5 * 1j * self.angle), 0, 0, 0],
+        return np.matrix([
+            [cmath.exp(-.5 * 1j * self.angle), 0, 0, 0],
             [0, cmath.exp(.5 * 1j * self.angle), 0, 0],
             [0, 0, cmath.exp(.5 * 1j * self.angle), 0],
             [0, 0, 0, cmath.exp(-.5 * 1j * self.angle)]])
@@ -272,6 +298,7 @@ class Rzz(BasicRotationGate):
 
 class R(BasicPhaseGate):
     """ Phase-shift gate (equivalent to Rz up to a global phase) """
+
     @property
     def matrix(self):
         return np.matrix([[1, 0], [0, cmath.exp(1j * self.angle)]])
@@ -302,6 +329,7 @@ class FlushGate(FastForwardingGate):
 
 class MeasureGate(FastForwardingGate):
     """ Measurement gate class (for single qubits)."""
+
     def __str__(self):
         return "Measure"
 
@@ -316,7 +344,7 @@ class MeasureGate(FastForwardingGate):
         for qureg in self.make_tuple_of_qureg(qubits):
             for qubit in qureg:
                 num_qubits += 1
-                cmd = self.generate_command(([qubit],))
+                cmd = self.generate_command(([qubit], ))
                 apply_command(cmd)
         if num_qubits > 1:
             warnings.warn("Pending syntax change in future versions of "
@@ -324,17 +352,20 @@ class MeasureGate(FastForwardingGate):
                           "only. Use `All(Measure) | qureg` instead to "
                           "measure multiple qubits.")
 
+
 #: Shortcut (instance of) :class:`projectq.ops.MeasureGate`
 Measure = MeasureGate()
 
 
 class AllocateQubitGate(ClassicalInstructionGate):
     """ Qubit allocation gate class """
+
     def __str__(self):
         return "Allocate"
 
     def get_inverse(self):
         return DeallocateQubitGate()
+
 
 #: Shortcut (instance of) :class:`projectq.ops.AllocateQubitGate`
 Allocate = AllocateQubitGate()
@@ -342,11 +373,13 @@ Allocate = AllocateQubitGate()
 
 class DeallocateQubitGate(FastForwardingGate):
     """ Qubit deallocation gate class """
+
     def __str__(self):
         return "Deallocate"
 
     def get_inverse(self):
         return Allocate
+
 
 #: Shortcut (instance of) :class:`projectq.ops.DeallocateQubitGate`
 Deallocate = DeallocateQubitGate()
@@ -354,11 +387,13 @@ Deallocate = DeallocateQubitGate()
 
 class AllocateDirtyQubitGate(ClassicalInstructionGate):
     """ Dirty qubit allocation gate class """
+
     def __str__(self):
         return "AllocateDirty"
 
     def get_inverse(self):
         return Deallocate
+
 
 #: Shortcut (instance of) :class:`projectq.ops.AllocateDirtyQubitGate`
 AllocateDirty = AllocateDirtyQubitGate()
@@ -366,11 +401,13 @@ AllocateDirty = AllocateDirtyQubitGate()
 
 class BarrierGate(BasicGate):
     """ Barrier gate class """
+
     def __str__(self):
         return "Barrier"
 
     def get_inverse(self):
         return Barrier
+
 
 #: Shortcut (instance of) :class:`projectq.ops.BarrierGate`
 Barrier = BarrierGate()
