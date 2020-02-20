@@ -143,7 +143,7 @@ class MainEngine(BasicEngine):
         self.backend = backend
 
         # Test that user did not supply twice the same engine instance
-        num_different_engines = len(set([id(item) for item in engine_list]))
+        num_different_engines = len({id(item) for item in engine_list})
         if len(engine_list) != num_different_engines:
             raise UnsupportedEngineError(
                 "\nError:\n You supplied twice the same engine as backend"
