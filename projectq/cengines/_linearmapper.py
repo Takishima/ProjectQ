@@ -177,7 +177,7 @@ class LinearMapper(BasicMapperEngine):
                 raise Exception("Invalid command (number of qubits): " +
                                 str(cmd))
 
-            elif isinstance(cmd.gate, AllocateQubitGate):
+            if isinstance(cmd.gate, AllocateQubitGate):
                 qubit_id = cmd.qubits[0][0].id
                 if len(allocated_qubits) < num_qubits:
                     allocated_qubits.add(qubit_id)
@@ -236,7 +236,7 @@ class LinearMapper(BasicMapperEngine):
         if qubit1 in neighbour_ids and qubit0 in neighbour_ids[qubit1]:
             return
         # at least one qubit is not an active qubit:
-        elif qubit0 not in active_qubits or qubit1 not in active_qubits:
+        if qubit0 not in active_qubits or qubit1 not in active_qubits:
             active_qubits.discard(qubit0)
             active_qubits.discard(qubit1)
         # at least one qubit is in the inside of a segment:

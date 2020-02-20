@@ -795,25 +795,25 @@ class _Circ2Tikz(object):
 
         if quantum:
             return "\n\\draw ({}) edge[edgestyle] ({});".format(op1, op2)
-        else:
-            if p2 > p1:
-                loc1, loc2 = loc2, loc1
-            edge_str = ("\n\\draw ([{shift}]{op1}.{loc1}) edge[edgestyle] "
-                        "([{shift}]{op2}.{loc2});")
-            line_sep = self.settings['lines']['double_lines_sep']
-            shift1 = shift.format(line_sep / 2.)
-            shift2 = shift.format(-line_sep / 2.)
-            edges_str = edge_str.format(shift=shift1,
-                                        op1=op1,
-                                        op2=op2,
-                                        loc1=loc1,
-                                        loc2=loc2)
-            edges_str += edge_str.format(shift=shift2,
-                                         op1=op1,
-                                         op2=op2,
-                                         loc1=loc1,
-                                         loc2=loc2)
-            return edges_str
+
+        if p2 > p1:
+            loc1, loc2 = loc2, loc1
+        edge_str = ("\n\\draw ([{shift}]{op1}.{loc1}) edge[edgestyle] "
+                    "([{shift}]{op2}.{loc2});")
+        line_sep = self.settings['lines']['double_lines_sep']
+        shift1 = shift.format(line_sep / 2.)
+        shift2 = shift.format(-line_sep / 2.)
+        edges_str = edge_str.format(shift=shift1,
+                                    op1=op1,
+                                    op2=op2,
+                                    loc1=loc1,
+                                    loc2=loc2)
+        edges_str += edge_str.format(shift=shift2,
+                                     op1=op1,
+                                     op2=op2,
+                                     loc1=loc1,
+                                     loc2=loc2)
+        return edges_str
 
     def _regular_gate(self, gate, lines, ctrl_lines):
         """

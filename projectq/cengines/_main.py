@@ -233,16 +233,16 @@ class MainEngine(BasicEngine):
         """
         if qubit.id in self._measurements:
             return self._measurements[qubit.id]
-        else:
-            raise NotYetMeasuredError(
-                "\nError: Can't access measurement result for "
-                "qubit #" + str(qubit.id) + ". The problem may "
-                "be:\n\t1. Your "
-                "code lacks a measurement statement\n\t"
-                "2. You have not yet called engine.flush() to "
-                "force execution of your code\n\t3. The "
-                "underlying backend failed to register "
-                "the measurement result\n")
+
+        raise NotYetMeasuredError(
+            "\nError: Can't access measurement result for "
+            "qubit #" + str(qubit.id) + ". The problem may "
+            "be:\n\t1. Your "
+            "code lacks a measurement statement\n\t"
+            "2. You have not yet called engine.flush() to "
+            "force execution of your code\n\t3. The "
+            "underlying backend failed to register "
+            "the measurement result\n")
 
     def get_new_qubit_id(self):
         """
@@ -275,16 +275,16 @@ class MainEngine(BasicEngine):
         except:
             if self.verbose:
                 raise
-            else:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                # try:
-                last_line = traceback.format_exc().splitlines()
-                compact_exception = exc_type(str(exc_value) +
-                                             '\n raised in:\n' +
-                                             repr(last_line[-3]) +
-                                             "\n" + repr(last_line[-2]))
-                compact_exception.__cause__ = None
-                raise compact_exception  # use verbose=True for more info
+
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            # try:
+            last_line = traceback.format_exc().splitlines()
+            compact_exception = exc_type(str(exc_value) +
+                                         '\n raised in:\n' +
+                                         repr(last_line[-3]) +
+                                         "\n" + repr(last_line[-2]))
+            compact_exception.__cause__ = None
+            raise compact_exception  # use verbose=True for more info
 
     def flush(self, deallocate_qubits=False):
         """

@@ -154,7 +154,7 @@ class QubitOperator(BasicGate):
         self.terms = {}
         if term is None:
             return
-        elif isinstance(term, tuple):
+        if isinstance(term, tuple):
             if term is ():
                 self.terms[()] = coefficient
             else:
@@ -380,8 +380,7 @@ class QubitOperator(BasicGate):
         if (isinstance(other, self.__class__) and len(other.terms) == 1
                 and len(self.terms) == 1):
             return self * other
-        else:
-            raise NotMergeable()
+        raise NotMergeable()
 
     def __imul__(self, multiplier):
         """
@@ -397,7 +396,7 @@ class QubitOperator(BasicGate):
             return self
 
         # Handle QubitOperator.
-        elif isinstance(multiplier, QubitOperator):
+        if isinstance(multiplier, QubitOperator):
             result_terms = dict()
             for left_term in self.terms:
                 for right_term in multiplier.terms:
@@ -455,9 +454,9 @@ class QubitOperator(BasicGate):
                         result_terms[tmp_key] = new_coefficient
             self.terms = result_terms
             return self
-        else:
-            raise TypeError('Cannot in-place multiply term of invalid type ' +
-                            'to QubitTerm.')
+
+        raise TypeError('Cannot in-place multiply term of invalid type ' +
+                        'to QubitTerm.')
 
     def __mul__(self, multiplier):
         """
@@ -476,9 +475,9 @@ class QubitOperator(BasicGate):
             product = copy.deepcopy(self)
             product *= multiplier
             return product
-        else:
-            raise TypeError(
-                'Object of invalid type cannot multiply with QubitOperator.')
+
+        raise TypeError(
+            'Object of invalid type cannot multiply with QubitOperator.')
 
     def __rmul__(self, multiplier):
         """

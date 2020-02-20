@@ -78,8 +78,7 @@ class BasicEngine(object):
         """
         if not self.is_last_engine:
             return self.next_engine.is_available(cmd)
-        else:
-            raise LastEngineException(self)
+        raise LastEngineException(self)
 
     def allocate_qubit(self, dirty=False):
         """

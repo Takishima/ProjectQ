@@ -55,8 +55,7 @@ class ClassicalSimulator(BasicEngine):
                                    "eng.flush().")
             return WeakQubitRef(qubit.engine,
                                 mapper.current_mapping[qubit.id])
-        else:
-            return qubit
+        return qubit
 
     def read_bit(self, qubit):
         """

@@ -106,7 +106,7 @@ class Simulator(BasicEngine):
             if len(m) > 2 ** 5:
                 return False
             return True
-        except:
+        except AttributeError:
             return False
 
     def _convert_logical_to_mapped_qureg(self, qureg):
@@ -128,8 +128,7 @@ class Simulator(BasicEngine):
                                          mapper.current_mapping[qubit.id])
                 mapped_qureg.append(new_qubit)
             return mapped_qureg
-        else:
-            return qureg
+        return qureg
 
     def get_expectation_value(self, qubit_operator, qureg):
         """

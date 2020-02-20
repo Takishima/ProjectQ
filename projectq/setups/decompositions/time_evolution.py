@@ -34,17 +34,17 @@ def _recognize_time_evolution_commuting_terms(cmd):
     hamiltonian = cmd.gate.hamiltonian
     if len(hamiltonian.terms) == 1:
         return False
-    else:
-        id_op = QubitOperator((), 0.0)
-        for term in hamiltonian.terms:
-            test_op = QubitOperator(term, hamiltonian.terms[term])
-            for other in hamiltonian.terms:
-                other_op = QubitOperator(other, hamiltonian.terms[other])
-                commutator = test_op * other_op - other_op * test_op
-                if not commutator.isclose(id_op,
-                                          rel_tol=1e-9,
-                                          abs_tol=1e-9):
-                    return False
+
+    id_op = QubitOperator((), 0.0)
+    for term in hamiltonian.terms:
+        test_op = QubitOperator(term, hamiltonian.terms[term])
+        for other in hamiltonian.terms:
+            other_op = QubitOperator(other, hamiltonian.terms[other])
+            commutator = test_op * other_op - other_op * test_op
+            if not commutator.isclose(id_op,
+                                      rel_tol=1e-9,
+                                      abs_tol=1e-9):
+                return False
     return True
 
 

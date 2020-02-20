@@ -89,8 +89,7 @@ class DaggeredGate(BasicGate):
         """
         if hasattr(self._gate, 'tex_str'):
             return self._gate.tex_str() + r"${}^\dagger$"
-        else:
-            return str(self._gate) + r"${}^\dagger$"
+        return str(self._gate) + r"${}^\dagger$"
 
     def get_inverse(self):
         """

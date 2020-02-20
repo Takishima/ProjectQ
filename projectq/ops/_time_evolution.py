@@ -136,8 +136,7 @@ class TimeEvolution(BasicGate):
             # Terms are proportional to each other
             new_time = self.time + other.time / factor
             return TimeEvolution(time=new_time, hamiltonian=self.hamiltonian)
-        else:
-            raise NotMergeable("Cannot merge these two gates.")
+        raise NotMergeable("Cannot merge these two gates.")
 
     def __or__(self, qubits):
         """
