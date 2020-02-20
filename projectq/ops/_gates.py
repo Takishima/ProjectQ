@@ -48,14 +48,9 @@ import warnings
 import numpy as np
 
 from projectq.ops import get_inverse
-from ._basics import (BasicGate,
-                      MatrixGate,
-                      SelfInverseGate,
-                      BasicRotationGate,
-                      BasicPhaseGate,
-                      ClassicalInstructionGate,
-                      FastForwardingGate,
-                      BasicMathGate)
+from ._basics import (BasicGate, SelfInverseGate, BasicRotationGate,
+                      BasicPhaseGate, ClassicalInstructionGate,
+                      FastForwardingGate)
 from ._command import apply_command
 
 
@@ -250,8 +245,8 @@ class Rxx(BasicRotationGate):
     @property
     def matrix(self):
         return np.matrix([[cmath.cos(.5 * self.angle), 0, 0, -1j*cmath.sin(.5 * self.angle)],
-                          [0, cmath.cos( .5 * self.angle), -1j*cmath.sin(.5 * self.angle), 0],
-                          [0, -1j*cmath.sin(.5 * self.angle), cmath.cos( .5 * self.angle), 0],
+            [0, cmath.cos(.5 * self.angle), -1j*cmath.sin(.5 * self.angle), 0],
+            [0, -1j*cmath.sin(.5 * self.angle), cmath.cos(.5 * self.angle), 0],
                           [-1j*cmath.sin(.5 * self.angle), 0, 0, cmath.cos( .5 * self.angle)]])
 
 
@@ -260,9 +255,9 @@ class Ryy(BasicRotationGate):
     @property
     def matrix(self):
         return np.matrix([[cmath.cos(.5 * self.angle), 0, 0, 1j*cmath.sin(.5 * self.angle)],
-                          [0, cmath.cos( .5 * self.angle), -1j*cmath.sin(.5 * self.angle), 0],
-                          [0, -1j*cmath.sin(.5 * self.angle), cmath.cos( .5 * self.angle), 0],
-                          [1j*cmath.sin(.5 * self.angle), 0, 0, cmath.cos( .5 * self.angle)]])
+            [0, cmath.cos(.5 * self.angle), -1j*cmath.sin(.5 * self.angle), 0],
+            [0, -1j*cmath.sin(.5 * self.angle), cmath.cos(.5 * self.angle), 0],
+            [1j*cmath.sin(.5 * self.angle), 0, 0, cmath.cos(.5 * self.angle)]])
 
 
 class Rzz(BasicRotationGate):
@@ -270,9 +265,9 @@ class Rzz(BasicRotationGate):
     @property
     def matrix(self):
         return np.matrix([[cmath.exp(-.5 * 1j * self.angle), 0, 0, 0],
-                          [0, cmath.exp( .5 * 1j * self.angle), 0, 0],
-                          [0, 0, cmath.exp( .5 * 1j * self.angle), 0],
-                          [0, 0, 0, cmath.exp(-.5 * 1j * self.angle)]])
+            [0, cmath.exp(.5 * 1j * self.angle), 0, 0],
+            [0, 0, cmath.exp(.5 * 1j * self.angle), 0],
+            [0, 0, 0, cmath.exp(-.5 * 1j * self.angle)]])
 
 
 class R(BasicPhaseGate):

@@ -17,16 +17,11 @@ Registers a few default replacement rules for Shor's algorithm to work
 (see Examples).
 """
 
-from projectq.meta import Control, Dagger
+from projectq.meta import Control
 from projectq.cengines import DecompositionRule
 
-from ._gates import (AddConstant,
-                     SubConstant,
-                     AddConstantModN,
-                     SubConstantModN,
-                     MultiplyByConstantModN)
-from ._constantmath import (add_constant,
-                            add_constant_modN,
+from ._gates import (AddConstant, AddConstantModN, MultiplyByConstantModN)
+from ._constantmath import (add_constant, add_constant_modN,
                             mul_by_constant_modN)
 
 

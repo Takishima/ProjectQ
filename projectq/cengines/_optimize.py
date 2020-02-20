@@ -16,8 +16,7 @@
 Contains a local optimizer engine.
 """
 
-from copy import deepcopy as _deepcopy
-from projectq.cengines import LastEngineException, BasicEngine
+from projectq.cengines import BasicEngine
 from projectq.ops import FlushGate, FastForwardingGate, NotMergeable
 
 

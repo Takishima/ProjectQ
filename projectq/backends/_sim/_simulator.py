@@ -22,15 +22,8 @@ import math
 import random
 from projectq.cengines import BasicEngine
 from projectq.meta import get_control_count, LogicalQubitIDTag
-from projectq.ops import (NOT,
-                          H,
-                          R,
-                          Measure,
-                          FlushGate,
-                          Allocate,
-                          Deallocate,
-                          BasicMathGate,
-                          TimeEvolution)
+from projectq.ops import (Measure, FlushGate, Allocate, Deallocate,
+                          BasicMathGate, TimeEvolution)
 from projectq.types import WeakQubitRef
 
 FALLBACK_TO_PYSIM = False

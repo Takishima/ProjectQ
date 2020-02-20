@@ -23,14 +23,13 @@ Output: Quantum circuit in which qubits are placed in 1-D chain in which only
         Swap gates in order to move qubits next to each other.
 """
 
-from collections import deque
 from copy import deepcopy
 
 from projectq.cengines import BasicMapperEngine
 from projectq.meta import LogicalQubitIDTag
 from projectq.ops import (Allocate, AllocateQubitGate, Deallocate,
                           DeallocateQubitGate, Command, FlushGate,
-                          MeasureGate, Swap)
+                          Swap)
 from projectq.types import WeakQubitRef
 
 

@@ -18,8 +18,8 @@ try:
 except ImportError:
     from fractions import gcd
 
-from projectq.ops import R, X, Swap, Measure, CNOT, QFT
-from projectq.meta import Control, Compute, Uncompute, CustomUncompute, Dagger
+from projectq.ops import R, X, Swap, CNOT, QFT
+from projectq.meta import Control, Compute, Uncompute, CustomUncompute
 from ._gates import AddConstant, SubConstant, AddConstantModN, SubConstantModN
 
 

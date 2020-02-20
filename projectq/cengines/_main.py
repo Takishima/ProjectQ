@@ -21,7 +21,6 @@ import sys
 import traceback
 import weakref
 
-import projectq
 from projectq.cengines import BasicEngine, BasicMapperEngine
 from projectq.ops import Command, FlushGate
 from projectq.types import WeakQubitRef

@@ -31,7 +31,7 @@ Example:
     .. code-block:: python
 
        # Example using a ProjectQ gate
-       
+
        n_qpe_ancillas = 3
        qpe_ancillas = eng.allocate_qureg(n_qpe_ancillas)
        system_qubits = eng.allocate_qureg(1)
@@ -84,10 +84,8 @@ Attributes:
 
 """
 
-import numpy as np
-
 from projectq.cengines import DecompositionRule
-from projectq.meta import Control, Loop, get_control_count
+from projectq.meta import Control, Loop
 from projectq.ops import H, Tensor, get_inverse, QFT
 
 from projectq.ops import QPE

@@ -15,7 +15,6 @@
 from projectq.ops import Allocate, Deallocate
 from projectq.types import Qubit, Qureg
 from projectq.ops import Command
-import projectq.cengines
 
 
 class LastEngineException(Exception):
