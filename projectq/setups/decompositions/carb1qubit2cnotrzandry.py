@@ -42,7 +42,7 @@ def _recognize_carb1qubit(cmd):
             m = cmd.gate.matrix
             if len(m) == 2:
                 return True
-        except:
+        except AttributeError:
             return False
     return False
 

@@ -72,7 +72,8 @@ def test_synthesis_with_adjusted_tbs():
     qubit1 = main_engine.allocate_qubit()
 
     import revkit
-    synth = lambda: revkit.tbs()
+
+    def synth(): revkit.tbs()
 
     PermutationOracle([0, 2, 1, 3], synth=synth) | (qubit0, qubit1)
 

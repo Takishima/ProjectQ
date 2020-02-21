@@ -173,7 +173,7 @@ class BasicEngine(object):
                 except AttributeError:
                     pass
                 engine = engine.next_engine
-        except:
+        except AttributeError:
             return False
 
     def send(self, command_list):
