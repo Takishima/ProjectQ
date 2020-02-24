@@ -312,4 +312,4 @@ class Tensor(BasicGate):
 All = Tensor
 
 
-all_defined_symbols = [get_inverse, C]
+all_defined_symbols = [get_inverse, C, is_identity]
