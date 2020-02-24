@@ -56,6 +56,8 @@ def _recognize_cnot2(cmd):
 
 #: Decomposition rules
 all_defined_decomposition_rules = [
-    DecompositionRule(X.__class__, _decompose_cnot2rxx_M, _recognize_cnot2),
-    DecompositionRule(X.__class__, _decompose_cnot2rxx_P, _recognize_cnot2)
+    DecompositionRule(X.__class__, _decompose_cnot2rxx_M, _recognize_cnot2,
+                      10),
+    DecompositionRule(X.__class__, _decompose_cnot2rxx_P, _recognize_cnot2,
+                      10)
 ]
