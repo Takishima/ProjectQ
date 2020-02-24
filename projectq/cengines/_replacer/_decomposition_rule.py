@@ -27,7 +27,8 @@ class DecompositionRule:
     def __init__(self,
                  gate_class,
                  gate_decomposer,
-                 gate_recognizer=lambda cmd: True):
+                 gate_recognizer=lambda cmd: True,
+                 rule_priority=0):
         """
         Args:
             gate_class (type): The type of gate that this rule decomposes.
@@ -69,3 +70,4 @@ class DecompositionRule:
         self.gate_class = gate_class
         self.gate_decomposer = gate_decomposer
         self.gate_recognizer = gate_recognizer
+        self.rule_priority = rule_priority
