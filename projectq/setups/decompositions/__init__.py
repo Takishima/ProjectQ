@@ -24,4 +24,4 @@ for (_, name, _) in pkgutil.iter_modules([os.path.dirname(__file__)]):
     imported_module = import_module('.' + name, package=__name__)
     setattr(sys.modules[__name__], name, imported_module)
     all_defined_decomposition_rules.extend(
-        rule for rule in imported_module.all_defined_decomposition_rules)
+        imported_module.all_defined_decomposition_rules)
