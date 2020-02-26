@@ -24,18 +24,22 @@ from ._basics import BasicGate
 def dynamic_import(name):
     imported_module = import_module('.' + name, package=__name__)
 
-    for i in dir(imported_module):
-        attribute = getattr(imported_module, i)
+    for attr_name in dir(imported_module):
+        module_attr = getattr(imported_module, attr_name)
 
-        if (not hasattr(sys.modules[__name__], i) and
-            (inspect.isclass(attribute) and issubclass(attribute,
-                                                       (BasicGate, Exception))
-             or isinstance(attribute, BasicGate))
-                and __name__ in attribute.__module__):
-            setattr(sys.modules[__name__], i, attribute)
+        # Only automatically import classes that derive from BasicGate or
+        # Exception and that have not already been imported and avoid
+        # importing classes from other ProjectQ submodules
+        if (not hasattr(sys.modules[__name__], attr_name)
+                and (inspect.isclass(module_attr)
+                     and issubclass(module_attr, (BasicGate, Exception))
+                     or isinstance(module_attr, BasicGate))
+                and __name__ in module_attr.__module__):
+            setattr(sys.modules[__name__], attr_name, module_attr)
 
-        if i == 'all_defined_symbols':
-            for symbol in attribute:
+        # If present, import all symbols from the 'all_defined_symbols' list
+        if attr_name == 'all_defined_symbols':
+            for symbol in module_attr:
                 if not hasattr(sys.modules[__name__], symbol.__name__):
                     setattr(sys.modules[__name__], symbol.__name__, symbol)
 

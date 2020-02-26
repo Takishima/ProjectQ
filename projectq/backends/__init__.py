@@ -37,13 +37,17 @@ for (_, name, _) in pkgutil.iter_modules([os.path.dirname(__file__)]):
         continue
 
     imported_module = import_module('.' + name, package=__name__)
-    for i in dir(imported_module):
-        attribute = getattr(imported_module, i)
-        if (inspect.isclass(attribute)
-                and issubclass(attribute, cengines.BasicEngine)
-                and not hasattr(sys.modules[__name__], i)
-                and __name__ in attribute.__module__):
-            setattr(sys.modules[__name__], i, attribute)
+    for attr_name in dir(imported_module):
+        module_attr = getattr(imported_module, attr_name)
+
+        # Only automatically import classes that derive from BasicEngine and
+        # that have not already been imported and avoid importing classes from
+        # other ProjectQ submodules
+        if (inspect.isclass(module_attr)
+                and issubclass(module_attr, cengines.BasicEngine)
+                and not hasattr(sys.modules[__name__], attr_name)
+                and __name__ in module_attr.__module__):
+            setattr(sys.modules[__name__], attr_name, module_attr)
 
 # Allow extending this namespace.
 __path__ = __import__('pkgutil').extend_path(__path__, __name__)
