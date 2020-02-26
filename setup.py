@@ -410,7 +410,7 @@ def run_setup(with_cext):
     else:
         kwargs['ext_modules'] = []
 
-    setup(name='projectq',
+    setup(name='hiq-projectq',
           version=__version__,
           author='ProjectQ',
           author_email='info@projectq.ch',
