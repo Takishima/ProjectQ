@@ -18,7 +18,7 @@ import inspect
 import pkgutil
 from importlib import import_module
 
-from ._basics import BasicEngine
+from ._core import *
 
 
 def dynamic_import(name):
@@ -43,16 +43,10 @@ def dynamic_import(name):
                     setattr(sys.modules[__name__], symbol.__name__, symbol)
 
 
-# Some submodules need to be imported first
-_priority_modules = [
-    '_basics', '_cmdmodifier', '_basicmapper', '_linearmapper'
-]
-for name in _priority_modules:
-    dynamic_import(name)
 
 _failed_list = []
 for (_, name, _) in pkgutil.iter_modules([os.path.dirname(__file__)]):
-    if name.endswith('test') or name in _priority_modules:
+    if name.endswith('test') or name == '_core':
         continue
     try:
         dynamic_import(name)

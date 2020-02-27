@@ -26,35 +26,12 @@ Output: Quantum circuit in which qubits are placed in 1-D chain in which only
 from collections import deque
 from copy import deepcopy
 
-from projectq.cengines import BasicMapperEngine
+from projectq.cengines import BasicMapperEngine, return_swap_depth
 from projectq.meta import LogicalQubitIDTag
 from projectq.ops import (Allocate, AllocateQubitGate, Deallocate,
                           DeallocateQubitGate, Command, FlushGate,
                           MeasureGate, Swap)
 from projectq.types import WeakQubitRef
-
-
-def return_swap_depth(swaps):
-    """
-    Returns the circuit depth to execute these swaps.
-
-    Args:
-        swaps(list of tuples): Each tuple contains two integers representing
-                               the two IDs of the qubits involved in the
-                               Swap operation
-    Returns:
-        Circuit depth to execute these swaps.
-    """
-    depth_of_qubits = dict()
-    for qb0_id, qb1_id in swaps:
-        if qb0_id not in depth_of_qubits:
-            depth_of_qubits[qb0_id] = 0
-        if qb1_id not in depth_of_qubits:
-            depth_of_qubits[qb1_id] = 0
-        max_depth = max(depth_of_qubits[qb0_id], depth_of_qubits[qb1_id])
-        depth_of_qubits[qb0_id] = max_depth + 1
-        depth_of_qubits[qb1_id] = max_depth + 1
-    return max(list(depth_of_qubits.values()) + [0])
 
 
 class LinearMapper(BasicMapperEngine):

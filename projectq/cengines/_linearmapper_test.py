@@ -26,15 +26,6 @@ from projectq.types import WeakQubitRef
 from projectq.cengines import _linearmapper as lm
 
 
-def test_return_swap_depth():
-    swaps = []
-    assert lm.return_swap_depth(swaps) == 0
-    swaps += [(0, 1), (0, 1), (1, 2)]
-    assert lm.return_swap_depth(swaps) == 3
-    swaps.append((2, 3))
-    assert lm.return_swap_depth(swaps) == 4
-
-
 def test_is_available():
     mapper = lm.LinearMapper(num_qubits=5, cyclic=False)
     qb0 = WeakQubitRef(engine=None, idx=0)

@@ -16,7 +16,7 @@
 Contains a CommandModifier engine, which can be used to, e.g., modify the tags
 of all commands which pass by (see the AutoReplacer for an example).
 """
-from projectq.cengines import BasicEngine
+from ._basics import BasicEngine
 
 
 class CommandModifier(BasicEngine):
