@@ -12,7 +12,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-import os
 import sys
 import inspect
 import pkgutil
@@ -43,9 +42,11 @@ def dynamic_import(name):
                     setattr(sys.modules[__name__], symbol.__name__, symbol)
 
 
+# Allow extending this namespace.
+__path__ = pkgutil.extend_path(__path__, __name__)
 
 _failed_list = []
-for (_, name, _) in pkgutil.iter_modules([os.path.dirname(__file__)]):
+for (_, name, _) in pkgutil.iter_modules(path=__path__):
     if name.endswith('test') or name == '_core':
         continue
     try:
@@ -55,6 +56,3 @@ for (_, name, _) in pkgutil.iter_modules([os.path.dirname(__file__)]):
 
 for name in _failed_list:
     dynamic_import(name)
-
-# Allow extending this namespace.
-__path__ = pkgutil.extend_path(__path__, __name__)

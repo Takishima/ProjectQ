@@ -24,15 +24,17 @@ This includes:
   circuit)
 * an interface to the IBM Quantum Experience chip (and simulator).
 """
-import os
 import sys
 import inspect
 import pkgutil
 from importlib import import_module
 
-import projectq.cengines as cengines
+# Allow extending this namespace.
+__path__ = __import__('pkgutil').extend_path(__path__, __name__)
 
-for (_, name, _) in pkgutil.iter_modules([os.path.dirname(__file__)]):
+from projectq.cengines import BasicEngine
+
+for (_, name, _) in pkgutil.iter_modules(path=__path__):
     if name.endswith('test'):
         continue
 
@@ -44,10 +46,7 @@ for (_, name, _) in pkgutil.iter_modules([os.path.dirname(__file__)]):
         # that have not already been imported and avoid importing classes from
         # other ProjectQ submodules
         if (inspect.isclass(module_attr)
-                and issubclass(module_attr, cengines.BasicEngine)
+                and issubclass(module_attr, BasicEngine)
                 and not hasattr(sys.modules[__name__], attr_name)
                 and __name__ in module_attr.__module__):
             setattr(sys.modules[__name__], attr_name, module_attr)
-
-# Allow extending this namespace.
-__path__ = __import__('pkgutil').extend_path(__path__, __name__)

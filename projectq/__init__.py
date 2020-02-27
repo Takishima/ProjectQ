@@ -24,8 +24,8 @@ Get started:
     Shor's algorithm for factoring.
 """
 
-from ._version import __version__
-from projectq.cengines import MainEngine
-
 # Allow extending this namespace.
 __path__ = __import__('pkgutil').extend_path(__path__, __name__)
+
+from ._version import __version__
+from projectq.cengines import MainEngine
