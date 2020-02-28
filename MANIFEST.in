@@ -7,3 +7,4 @@ include requirements.txt
 include setup.py
 
 recursive-include projectq *.py *.hpp *.cpp
+global-exclude *_test.py
