@@ -30,7 +30,7 @@ from projectq.ops import (AllocateQubitGate,
                           H, FastForwardingGate,
                           ClassicalInstructionGate)
 
-from projectq.cengines import _basics
+from . import _basics
 
 
 def test_basic_engine_init():
