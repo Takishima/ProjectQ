@@ -18,7 +18,7 @@ from projectq import MainEngine
 from projectq.cengines import DummyEngine
 from projectq.ops import H, FastForwardingGate, ClassicalInstructionGate
 
-from projectq.cengines import _cmdmodifier
+from . import _cmdmodifier
 
 
 def test_command_modifier():

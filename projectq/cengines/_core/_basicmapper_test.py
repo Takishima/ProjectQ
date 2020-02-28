@@ -22,7 +22,7 @@ from projectq.ops import (Allocate, BasicGate, Command, Deallocate, FlushGate,
                           Measure)
 from projectq.types import WeakQubitRef
 
-from projectq.cengines import _basicmapper
+from . import _basicmapper
 
 
 def test_basic_mapper_engine_send_cmd_with_mapped_ids():
