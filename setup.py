@@ -40,7 +40,6 @@ from distutils.errors import (CompileError, LinkError, CCompilerError,
                               DistutilsExecError, DistutilsPlatformError)
 import setuptools
 from setuptools.command.build_ext import build_ext
-import inspect
 import sys
 import os
 import subprocess
@@ -161,17 +160,6 @@ def _fix_macosx_header_paths(*args):
 class BuildFailed(Exception):
     def __init__(self):
         self.cause = sys.exc_info()[1]  # work around py 2/3 different syntax
-
-
-# ------------------------------------------------------------------------------
-
-
-if not hasattr(setuptools, 'find_namespace_packages') or not inspect.ismethod(
-        setuptools.find_namespace_packages):
-    raise RuntimeError('Your setuptools version ({}) does not support PEP420'
-                       ' (find_namespace_packages). Please upgrade it at '
-                       'least to version >= 40.1.0'.format(
-                           setuptools.__version__))
 
 
 # ------------------------------------------------------------------------------
