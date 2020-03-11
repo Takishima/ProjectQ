@@ -39,6 +39,7 @@ from setuptools import setup, Extension, find_packages
 from distutils.errors import (CompileError, LinkError, CCompilerError,
                               DistutilsExecError, DistutilsPlatformError)
 from setuptools import Distribution as _Distribution
+from setuptools.command.egg_info import egg_info
 from setuptools.command.build_ext import build_ext
 import sys
 import os
@@ -173,6 +174,9 @@ if sys.platform == 'win32':
     ext_errors += (IOError, )
 
 # ==============================================================================
+
+# This package's name
+pkg_name = 'hiq-projectq'
 
 # This reads the __version__ variable from projectq/_version.py
 exec(open('projectq/_version.py').read())
@@ -389,6 +393,27 @@ class BuildExt(build_ext):
         raise BuildFailed()
 
 
+class EggInfo(egg_info):
+    def run(self):
+        try:
+            with open(os.devnull, 'w') as devnull:
+                subprocess.check_call(
+                    ['python3', '-m', 'pip', 'show', 'projectq'],
+                    stdout=devnull,
+                    stderr=devnull)
+
+            raise RuntimeError(
+                ('Error: unable to install {0} {1} because you have ProjectQ '
+                 'installed.\n'
+                 'Please uninstall ProjectQ before trying to install {0} '
+                 'again.\nNote that {0} has the same functionality as '
+                 'ProjectQ and you will be able to run `import projectq` '
+                 'statements as usual').format(pkg_name, __version__))
+        except subprocess.CalledProcessError:
+            pass
+        egg_info.run(self)
+
+
 class Distribution(_Distribution):
     def has_ext_modules(self):
         # We want to always claim that we have ext_modules. This will be fine
@@ -410,27 +435,28 @@ def run_setup(with_cext):
     else:
         kwargs['ext_modules'] = []
 
-    setup(name='hiq-projectq',
-          version=__version__,
-          author='ProjectQ',
-          author_email='info@projectq.ch',
-          url='http://www.projectq.ch',
-          project_urls={
-              'Documentation': 'https://projectq.readthedocs.io/en/latest/',
+    setup(
+        name=pkg_name,
+        version=__version__,
+        author='ProjectQ',
+        author_email='info@projectq.ch',
+        url='http://www.projectq.ch',
+        project_urls={
+            'Documentation': 'https://projectq.readthedocs.io/en/latest/',
               'Issue Tracker':
               'https://github.com/ProjectQ-Framework/ProjectQ/',
-          },
-          description=(
-              'ProjectQ - '
-              'An open source software framework for quantum computing'),
-          long_description=long_description,
-          install_requires=requirements,
-          cmdclass={'build_ext': BuildExt},
-          zip_safe=False,
-          license='Apache 2',
+        },
+        description=(
+            'ProjectQ - '
+            'An open source software framework for quantum computing'),
+        long_description=long_description,
+        install_requires=requirements,
+        cmdclass={'build_ext': BuildExt, 'egg_info': EggInfo},
+        zip_safe=False,
+        license='Apache 2',
           packages=find_packages(),
-          distclass=Distribution,
-          **kwargs)
+        distclass=Distribution,
+        **kwargs)
 
 
 # ==============================================================================
