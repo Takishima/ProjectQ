@@ -21,6 +21,7 @@ Please cite
 Contents
 	* :ref:`tutorial`: Tutorial containing instructions on how to get started with ProjectQ.
 	* :ref:`examples`: Example implementations of few quantum algorithms
+	* :ref:`extending`: How to write ProjectQ extensions
 	* :ref:`code_doc`: The code documentation of ProjectQ.
 
 
@@ -30,4 +31,5 @@ Contents
 	
 	tutorials
 	examples
+	projectq_extensions
 	projectq
