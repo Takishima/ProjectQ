@@ -49,7 +49,7 @@ class IBM5QubitMapper(BasicMapperEngine):
         self._interactions = dict()
 
         if connections is None:
-            #general connectivity easier for testing functions
+            # General connectivity easier for testing functions
             self.connections = set([(0, 1), (1, 0), (1, 2), (1, 3), (1, 4),
                                     (2, 1), (2, 3), (2, 4), (3, 1), (3, 4),
                                     (4, 3)])

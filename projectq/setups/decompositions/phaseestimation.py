@@ -11,7 +11,6 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
 """
 Registers a decomposition for phase estimation.
 
@@ -31,7 +30,7 @@ Example:
     .. code-block:: python
 
        # Example using a ProjectQ gate
-       
+
        n_qpe_ancillas = 3
        qpe_ancillas = eng.allocate_qureg(n_qpe_ancillas)
        system_qubits = eng.allocate_qureg(1)
@@ -76,18 +75,15 @@ Example:
        print (phase)
 
 Attributes:
-    unitary (BasicGate): Unitary Operation either a ProjectQ gate or a function f.
-    Calling the function with the parameters system_qubits(Qureg) and time (integer),
-    i.e. f(system_qubits, time), applies to the system qubits a unitary defined in f
-    with parameter time.
-    
-
+    unitary (BasicGate): Unitary Operation either a ProjectQ gate or a
+        function f.
+        Calling the function with the parameters system_qubits(Qureg) and time
+        (integer), i.e. f(system_qubits, time), applies to the system qubits a
+        unitary defined in f with parameter time.
 """
 
-import numpy as np
-
 from projectq.cengines import DecompositionRule
-from projectq.meta import Control, Loop, get_control_count
+from projectq.meta import Control, Loop
 from projectq.ops import H, Tensor, get_inverse, QFT
 
 from projectq.ops import QPE
@@ -123,7 +119,6 @@ def _decompose_QPE(cmd):
     # Inverse QFT on the ancillas
     get_inverse(QFT) | qpe_ancillas
 
+
 #: Decomposition rules
-all_defined_decomposition_rules = [
-    DecompositionRule(QPE, _decompose_QPE)
-]
+all_defined_decomposition_rules = [DecompositionRule(QPE, _decompose_QPE)]

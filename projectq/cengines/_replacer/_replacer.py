@@ -142,7 +142,7 @@ class AutoReplacer(BasicEngine):
                 if level < len(gate_mro):
                     class_name = gate_mro[level].__name__
                     try:
-                        potential_decomps = [d for d in rules[class_name]]
+                        potential_decomps = rules[class_name]
                     except KeyError:
                         pass
                     # throw out the ones which don't recognize the command

@@ -17,4 +17,3 @@ from ._plot import to_draw
 
 from ._drawer import CircuitDrawer
 from ._drawer_matplotlib import CircuitDrawerMatplotlib
-

@@ -28,7 +28,7 @@ import numpy
 
 from projectq.cengines import DecompositionRule
 from projectq.meta import get_control_count, Control
-from projectq.ops import BasicGate, CNOT, Ph, Ry, Rz, X
+from projectq.ops import BasicGate, Ph, Ry, Rz, X
 from projectq.setups.decompositions import arb1qubit2rzandry as arb1q
 
 
@@ -42,7 +42,7 @@ def _recognize_carb1qubit(cmd):
             m = cmd.gate.matrix
             if len(m) == 2:
                 return True
-        except:
+        except AttributeError:
             return False
     return False
 
@@ -104,7 +104,7 @@ def _recognize_v(matrix):
         assert found  # It should work for all matrices with matrix[0][0]==0.
         return (a, b, c_half)
 
-    elif abs(matrix[0][1]) < TOLERANCE:
+    if abs(matrix[0][1]) < TOLERANCE:
         two_a = cmath.phase(-matrix[0][0] * matrix[1][1]) % (2*math.pi)
         if abs(two_a) < TOLERANCE or abs(two_a) > 2*math.pi-TOLERANCE:
             # from 2a==0 (mod 2pi), it follows that a==0 or a==pi,
@@ -122,29 +122,28 @@ def _recognize_v(matrix):
                 return (a, b, c_half)
         return False
 
+    two_a = cmath.phase(-1.*matrix[0][0]*matrix[1][1]) % (2*math.pi)
+    if abs(two_a) < TOLERANCE or abs(two_a) > 2*math.pi-TOLERANCE:
+        # from 2a==0 (mod 2pi), it follows that a==0 or a==pi,
+        # w.l.g. we can choose a==0 because (see U above)
+        # c/2 -> c/2 + pi would have the same effect as as a==0 -> a==pi.
+        a = 0
     else:
-        two_a = cmath.phase(-1.*matrix[0][0]*matrix[1][1]) % (2*math.pi)
-        if abs(two_a) < TOLERANCE or abs(two_a) > 2*math.pi-TOLERANCE:
-            # from 2a==0 (mod 2pi), it follows that a==0 or a==pi,
-            # w.l.g. we can choose a==0 because (see U above)
-            # c/2 -> c/2 + pi would have the same effect as as a==0 -> a==pi.
-            a = 0
-        else:
-            a = two_a/2.
-        two_b = cmath.phase(matrix[1][0])-cmath.phase(matrix[0][1])
-        possible_b = [(two_b/2.) % (2*math.pi),
-                      (two_b/2.+math.pi) % (2*math.pi)]
-        tmp = math.acos(abs(matrix[1][0]))
-        possible_c_half = [tmp % (2*math.pi),
-                           (tmp+math.pi) % (2*math.pi),
-                           (-1.*tmp) % (2*math.pi),
-                           (-1.*tmp+math.pi) % (2*math.pi)]
-        found = False
-        for b, c_half in itertools.product(possible_b, possible_c_half):
-            if _test_parameters(matrix, a, b, c_half):
-                found = True
-                return (a, b, c_half)
-        return False
+        a = two_a/2.
+    two_b = cmath.phase(matrix[1][0])-cmath.phase(matrix[0][1])
+    possible_b = [(two_b/2.) % (2*math.pi),
+                  (two_b/2.+math.pi) % (2*math.pi)]
+    tmp = math.acos(abs(matrix[1][0]))
+    possible_c_half = [tmp % (2*math.pi),
+                       (tmp+math.pi) % (2*math.pi),
+                       (-1.*tmp) % (2*math.pi),
+                       (-1.*tmp+math.pi) % (2*math.pi)]
+    found = False
+    for b, c_half in itertools.product(possible_b, possible_c_half):
+        if _test_parameters(matrix, a, b, c_half):
+            found = True
+            return (a, b, c_half)
+    return False
 
 
 def _decompose_carb1qubit(cmd):

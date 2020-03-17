@@ -42,20 +42,16 @@ def high_level_gates(eng, cmd):
     g = cmd.gate
     if g == QFT or get_inverse(g) == QFT or g == Swap:
         return True
-    elif isinstance(g, BasicMathGate):
+    if isinstance(g, BasicMathGate):
         return False
     return True
 
 
 def one_and_two_qubit_gates(eng, cmd):
-    all_qubits = [q for qr in cmd.all_qubits for q in qr]
     if isinstance(cmd.gate, ClassicalInstructionGate):
         # This is required to allow Measure, Allocate, Deallocate, Flush
         return True
-    elif len(all_qubits) <= 2:
-        return True
-    else:
-        return False
+    return len([q for qr in cmd.all_qubits for q in qr]) <= 2
 
 
 def get_engine_list(num_qubits, cyclic=False, one_qubit_gates="any",
@@ -141,16 +137,15 @@ def get_engine_list(num_qubits, cyclic=False, one_qubit_gates="any",
         if isinstance(cmd.gate, ClassicalInstructionGate):
             # This is required to allow Measure, Allocate, Deallocate, Flush
             return True
-        elif one_qubit_gates == "any" and len(all_qubits) == 1:
+        if one_qubit_gates == "any" and len(all_qubits) == 1:
             return True
-        elif two_qubit_gates == "any" and len(all_qubits) == 2:
+        if two_qubit_gates == "any" and len(all_qubits) == 2:
             return True
-        elif isinstance(cmd.gate, allowed_gate_classes):
+        if isinstance(cmd.gate, allowed_gate_classes):
             return True
-        elif (cmd.gate, len(cmd.control_qubits)) in allowed_gate_instances:
+        if (cmd.gate, len(cmd.control_qubits)) in allowed_gate_instances:
             return True
-        else:
-            return False
+        return False
 
     return [AutoReplacer(rule_set),
             TagRemover(),

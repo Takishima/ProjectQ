@@ -13,8 +13,8 @@
 #   limitations under the License.
 
 # helpers to run the jsonified gate sequence on ibm quantum experience server
-# api documentation does not exist and has to be deduced from the qiskit code source
-# at: https://github.com/Qiskit/qiskit-ibmq-provider
+# api documentation does not exist and has to be deduced from the qiskit code
+# source at: https://github.com/Qiskit/qiskit-ibmq-provider
 
 import getpass
 import time
@@ -23,7 +23,8 @@ import requests
 from requests.compat import urljoin
 from requests import Session
 
-_AUTH_API_URL = 'https://auth.quantum-computing.ibm.com/api/users/loginWithToken'
+_AUTH_API_URL = ('https://auth.quantum-computing.ibm.com/api/users/'
+                 'loginWithToken')
 _API_URL = 'https://api.quantum-computing.ibm.com/api/'
 
 # TODO: call to get the API version automatically

@@ -11,7 +11,6 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
 """
 Contains meta gates, i.e.,
 * DaggeredGate (Represents the inverse of an arbitrary gate)
@@ -29,7 +28,6 @@ As well as the meta functions
 """
 
 from ._basics import BasicGate, NotInvertible
-from ._command import Command, apply_command
 
 
 class ControlQubitError(Exception):
@@ -91,8 +89,7 @@ class DaggeredGate(BasicGate):
         """
         if hasattr(self._gate, 'tex_str'):
             return self._gate.tex_str() + r"${}^\dagger$"
-        else:
-            return str(self._gate) + r"${}^\dagger$"
+        return str(self._gate) + r"${}^\dagger$"
 
     def get_inverse(self):
         """
@@ -132,6 +129,7 @@ def get_inverse(gate):
     except NotInvertible:
         return DaggeredGate(gate)
 
+
 def is_identity(gate):
     """
     Return True if the gate is an identity gate.
@@ -148,6 +146,7 @@ def is_identity(gate):
             get_inverse(Rx(math.pi)) # returns False
     """
     return gate.is_identity()
+
 
 class ControlledGate(BasicGate):
     """
@@ -240,8 +239,8 @@ class ControlledGate(BasicGate):
 
     def __eq__(self, other):
         """ Compare two ControlledGate objects (return True if equal). """
-        return (isinstance(other, self.__class__) and
-                self._gate == other._gate and self._n == other._n)
+        return (isinstance(other, self.__class__) and self._gate == other._gate
+                and self._n == other._n)
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -306,6 +305,7 @@ class Tensor(BasicGate):
         assert isinstance(qubits, list)
         for qubit in qubits:
             self._gate | qubit
+
 
 #: Shortcut (instance of) :class:`projectq.ops.Tensor`
 All = Tensor

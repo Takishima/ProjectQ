@@ -79,8 +79,7 @@ class ResourceCounter(BasicEngine):
         if self._depth_of_qubit:
             current_max = max(self._depth_of_qubit.values())
             return max(current_max, self._previous_max_depth)
-        else:
-            return self._previous_max_depth
+        return self._previous_max_depth
 
     def _add_cmd(self, cmd):
         """

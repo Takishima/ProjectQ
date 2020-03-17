@@ -23,14 +23,13 @@ Output: Quantum circuit in which qubits are placed in 1-D chain in which only
         Swap gates in order to move qubits next to each other.
 """
 
-from collections import deque
 from copy import deepcopy
 
 from projectq.cengines import BasicMapperEngine
 from projectq.meta import LogicalQubitIDTag
 from projectq.ops import (Allocate, AllocateQubitGate, Deallocate,
                           DeallocateQubitGate, Command, FlushGate,
-                          MeasureGate, Swap)
+                          Swap)
 from projectq.types import WeakQubitRef
 
 
@@ -116,10 +115,7 @@ class LinearMapper(BasicMapperEngine):
         num_qubits = 0
         for qureg in cmd.all_qubits:
             num_qubits += len(qureg)
-        if num_qubits <= 2:
-            return True
-        else:
-            return False
+        return (num_qubits <= 2)
 
     @staticmethod
     def return_new_mapping(num_qubits, cyclic, currently_allocated_ids,
@@ -181,7 +177,7 @@ class LinearMapper(BasicMapperEngine):
                 raise Exception("Invalid command (number of qubits): " +
                                 str(cmd))
 
-            elif isinstance(cmd.gate, AllocateQubitGate):
+            if isinstance(cmd.gate, AllocateQubitGate):
                 qubit_id = cmd.qubits[0][0].id
                 if len(allocated_qubits) < num_qubits:
                     allocated_qubits.add(qubit_id)
@@ -240,7 +236,7 @@ class LinearMapper(BasicMapperEngine):
         if qubit1 in neighbour_ids and qubit0 in neighbour_ids[qubit1]:
             return
         # at least one qubit is not an active qubit:
-        elif qubit0 not in active_qubits or qubit1 not in active_qubits:
+        if qubit0 not in active_qubits or qubit1 not in active_qubits:
             active_qubits.discard(qubit0)
             active_qubits.discard(qubit1)
         # at least one qubit is in the inside of a segment:
@@ -530,7 +526,7 @@ class LinearMapper(BasicMapperEngine):
                     mapped_ids = list(mapped_ids)
                     diff = abs(mapped_ids[0]-mapped_ids[1])
                     if self.cyclic:
-                        if diff != 1 and diff != self.num_qubits-1:
+                        if diff not in (1, self.num_qubits - 1):
                             send_gate = False
                     else:
                         if diff != 1:

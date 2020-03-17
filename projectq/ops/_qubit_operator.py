@@ -11,39 +11,35 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
 """QubitOperator stores a sum of Pauli operators acting on qubits."""
 import cmath
 import copy
-import itertools
-
-import numpy
 
 from ._basics import BasicGate, NotInvertible, NotMergeable
 from ._command import apply_command
 from ._gates import Ph, X, Y, Z
 
-
 EQ_TOLERANCE = 1e-12
 
-
 # Define products of all Pauli operators for symbolic multiplication.
-_PAULI_OPERATOR_PRODUCTS = {('I', 'I'): (1., 'I'),
-                            ('I', 'X'): (1., 'X'),
-                            ('X', 'I'): (1., 'X'),
-                            ('I', 'Y'): (1., 'Y'),
-                            ('Y', 'I'): (1., 'Y'),
-                            ('I', 'Z'): (1., 'Z'),
-                            ('Z', 'I'): (1., 'Z'),
-                            ('X', 'X'): (1., 'I'),
-                            ('Y', 'Y'): (1., 'I'),
-                            ('Z', 'Z'): (1., 'I'),
-                            ('X', 'Y'): (1.j, 'Z'),
-                            ('X', 'Z'): (-1.j, 'Y'),
-                            ('Y', 'X'): (-1.j, 'Z'),
-                            ('Y', 'Z'): (1.j, 'X'),
-                            ('Z', 'X'): (1.j, 'Y'),
-                            ('Z', 'Y'): (-1.j, 'X')}
+_PAULI_OPERATOR_PRODUCTS = {
+    ('I', 'I'): (1., 'I'),
+    ('I', 'X'): (1., 'X'),
+    ('X', 'I'): (1., 'X'),
+    ('I', 'Y'): (1., 'Y'),
+    ('Y', 'I'): (1., 'Y'),
+    ('I', 'Z'): (1., 'Z'),
+    ('Z', 'I'): (1., 'Z'),
+    ('X', 'X'): (1., 'I'),
+    ('Y', 'Y'): (1., 'I'),
+    ('Z', 'Z'): (1., 'I'),
+    ('X', 'Y'): (1.j, 'Z'),
+    ('X', 'Z'): (-1.j, 'Y'),
+    ('Y', 'X'): (-1.j, 'Z'),
+    ('Y', 'Z'): (1.j, 'X'),
+    ('Z', 'X'): (1.j, 'Y'),
+    ('Z', 'Y'): (-1.j, 'X')
+}
 
 
 class QubitOperatorError(Exception):
@@ -158,14 +154,14 @@ class QubitOperator(BasicGate):
         self.terms = {}
         if term is None:
             return
-        elif isinstance(term, tuple):
+        if isinstance(term, tuple):
             if term is ():
                 self.terms[()] = coefficient
             else:
                 # Test that input is a tuple of tuples and correct action
                 for local_operator in term:
-                    if (not isinstance(local_operator, tuple) or
-                            len(local_operator) != 2):
+                    if (not isinstance(local_operator, tuple)
+                            or len(local_operator) != 2):
                         raise ValueError("term specified incorrectly.")
                     qubit_num, action = local_operator
                     if not isinstance(action, str) or action not in 'XYZ':
@@ -240,7 +236,7 @@ class QubitOperator(BasicGate):
             a = self.terms[term]
             b = other.terms[term]
             # math.isclose does this in Python >=3.5
-            if not abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol):
+            if not abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol):
                 return False
         # terms only in one (compare to 0.0 so only abs_tol)
         for term in set(self.terms).symmetric_difference(set(other.terms)):
@@ -310,8 +306,8 @@ class QubitOperator(BasicGate):
                             "to qubits with this function.")
         (term, coefficient), = self.terms.items()
         phase = cmath.phase(coefficient)
-        if (abs(coefficient) < 1 - EQ_TOLERANCE or
-                abs(coefficient) > 1 + EQ_TOLERANCE):
+        if (abs(coefficient) < 1 - EQ_TOLERANCE
+                or abs(coefficient) > 1 + EQ_TOLERANCE):
             raise TypeError("abs(coefficient) != 1. Only QubitOperators "
                             "consisting of a single term (single n-qubit "
                             "Pauli operator) with a coefficient of unit "
@@ -347,8 +343,8 @@ class QubitOperator(BasicGate):
             new_index[non_trivial_qubits[i]] = i
         new_qubitoperator = QubitOperator()
         assert len(new_qubitoperator.terms) == 0
-        new_term = tuple([(new_index[index], action)
-                          for index, action in term])
+        new_term = tuple(
+            [(new_index[index], action) for index, action in term])
         new_qubitoperator.terms[new_term] = coefficient
         new_qubits = [qubits[0][i] for i in non_trivial_qubits]
         # Apply new gate
@@ -367,8 +363,8 @@ class QubitOperator(BasicGate):
 
         if len(self.terms) == 1:
             (term, coefficient), = self.terms.items()
-            if (not abs(coefficient) < 1 - EQ_TOLERANCE and not
-                    abs(coefficient) > 1 + EQ_TOLERANCE):
+            if (not abs(coefficient) < 1 - EQ_TOLERANCE
+                    and not abs(coefficient) > 1 + EQ_TOLERANCE):
                 return QubitOperator(term, coefficient**(-1))
         raise NotInvertible("BasicGate: No get_inverse() implemented.")
 
@@ -381,12 +377,10 @@ class QubitOperator(BasicGate):
         Raises:
             NotMergeable: merging is not possible
         """
-        if (isinstance(other, self.__class__) and
-                len(other.terms) == 1 and
-                len(self.terms) == 1):
+        if (isinstance(other, self.__class__) and len(other.terms) == 1
+                and len(self.terms) == 1):
             return self * other
-        else:
-            raise NotMergeable()
+        raise NotMergeable()
 
     def __imul__(self, multiplier):
         """
@@ -402,12 +396,12 @@ class QubitOperator(BasicGate):
             return self
 
         # Handle QubitOperator.
-        elif isinstance(multiplier, QubitOperator):
+        if isinstance(multiplier, QubitOperator):
             result_terms = dict()
             for left_term in self.terms:
                 for right_term in multiplier.terms:
-                    new_coefficient = (self.terms[left_term] *
-                                       multiplier.terms[right_term])
+                    new_coefficient = (
+                        self.terms[left_term] * multiplier.terms[right_term])
 
                     # Loop through local operators and create new sorted list
                     # of representing the product local operator:
@@ -416,19 +410,20 @@ class QubitOperator(BasicGate):
                     right_operator_index = 0
                     n_operators_left = len(left_term)
                     n_operators_right = len(right_term)
-                    while (left_operator_index < n_operators_left and
-                           right_operator_index < n_operators_right):
-                        (left_qubit, left_loc_op) = (
-                            left_term[left_operator_index])
-                        (right_qubit, right_loc_op) = (
-                            right_term[right_operator_index])
+                    while (left_operator_index < n_operators_left
+                           and right_operator_index < n_operators_right):
+                        (left_qubit,
+                         left_loc_op) = (left_term[left_operator_index])
+                        (right_qubit,
+                         right_loc_op) = (right_term[right_operator_index])
 
                         # Multiply local operators acting on the same qubit
                         if left_qubit == right_qubit:
                             left_operator_index += 1
                             right_operator_index += 1
-                            (scalar, loc_op) = _PAULI_OPERATOR_PRODUCTS[
-                                (left_loc_op, right_loc_op)]
+                            (scalar,
+                             loc_op) = _PAULI_OPERATOR_PRODUCTS[(left_loc_op,
+                                                                 right_loc_op)]
 
                             # Add new term.
                             if loc_op != 'I':
@@ -447,8 +442,7 @@ class QubitOperator(BasicGate):
 
                     # Finish the remainding operators:
                     if left_operator_index == n_operators_left:
-                        product_operators += right_term[
-                            right_operator_index::]
+                        product_operators += right_term[right_operator_index::]
                     elif right_operator_index == n_operators_right:
                         product_operators += left_term[left_operator_index::]
 
@@ -460,9 +454,9 @@ class QubitOperator(BasicGate):
                         result_terms[tmp_key] = new_coefficient
             self.terms = result_terms
             return self
-        else:
-            raise TypeError('Cannot in-place multiply term of invalid type ' +
-                            'to QubitTerm.')
+
+        raise TypeError('Cannot in-place multiply term of invalid type ' +
+                        'to QubitTerm.')
 
     def __mul__(self, multiplier):
         """
@@ -477,14 +471,13 @@ class QubitOperator(BasicGate):
         Raises:
             TypeError: Invalid type cannot be multiply with QubitOperator.
         """
-        if (isinstance(multiplier, (int, float, complex)) or
-                isinstance(multiplier, QubitOperator)):
+        if isinstance(multiplier, (int, float, complex, QubitOperator)):
             product = copy.deepcopy(self)
             product *= multiplier
             return product
-        else:
-            raise TypeError(
-                'Object of invalid type cannot multiply with QubitOperator.')
+
+        raise TypeError(
+            'Object of invalid type cannot multiply with QubitOperator.')
 
     def __rmul__(self, multiplier):
         """

@@ -40,7 +40,7 @@ def test_simple_test_X_eigenvectors():
                      engine_list=[AutoReplacer(rule_set),
                                   ])
     results = np.array([])
-    for i in range(100):
+    for i in range(200):
         autovector = eng.allocate_qureg(1)
         X | autovector
         H | autovector
@@ -57,7 +57,7 @@ def test_simple_test_X_eigenvectors():
         eng.flush()
 
     num_phase = (results == 0.5).sum()
-    assert num_phase/100. >= 0.35, "Statistics phase calculation are not correct (%f vs. %f)" % (num_phase/100., 0.35)
+    assert num_phase/200. >= 0.35, "Statistics phase calculation are not correct (%f vs. %f)" % (num_phase/200., 0.35)
 
 
 def test_Ph_eigenvectors():
@@ -66,7 +66,7 @@ def test_Ph_eigenvectors():
                      engine_list=[AutoReplacer(rule_set),
                                   ])
     results = np.array([])
-    for i in range(100):
+    for i in range(200):
         autovector = eng.allocate_qureg(1)
         theta = cmath.pi*2.*0.125
         unit = Ph(theta)
@@ -82,7 +82,7 @@ def test_Ph_eigenvectors():
         eng.flush()
 
     num_phase = (results == 0.125).sum()
-    assert num_phase/100. >= 0.35, "Statistics phase calculation are not correct (%f vs. %f)" % (num_phase/100., 0.35)
+    assert num_phase/200. >= 0.35, "Statistics phase calculation are not correct (%f vs. %f)" % (num_phase/200., 0.35)
 
 
 def two_qubit_gate(system_q, time):
@@ -97,7 +97,7 @@ def test_2qubitsPh_andfunction_eigenvectors():
                      engine_list=[AutoReplacer(rule_set),
                                   ])
     results = np.array([])
-    for i in range(100):
+    for i in range(200):
         autovector = eng.allocate_qureg(2)
         X | autovector[0]
         ancillas = eng.allocate_qureg(3)
@@ -112,7 +112,7 @@ def test_2qubitsPh_andfunction_eigenvectors():
         eng.flush()
 
     num_phase = (results == 0.125).sum()
-    assert num_phase/100. >= 0.34, "Statistics phase calculation are not correct (%f vs. %f)" % (num_phase/100., 0.34)
+    assert num_phase/200. >= 0.35, "Statistics phase calculation are not correct (%f vs. %f)" % (num_phase/200., 0.35)
 
 
 def test_X_no_eigenvectors():
@@ -123,7 +123,7 @@ def test_X_no_eigenvectors():
     results = np.array([])
     results_plus = np.array([])
     results_minus = np.array([])
-    for i in range(100):
+    for i in range(200):
         autovector = eng.allocate_qureg(1)
         amplitude0 = (np.sqrt(2) + np.sqrt(6))/4.
         amplitude1 = (np.sqrt(2) - np.sqrt(6))/4.
@@ -151,8 +151,8 @@ def test_X_no_eigenvectors():
         eng.flush()
 
     total = len(results_plus) + len(results_minus)
-    plus_probability = len(results_plus)/100.
-    assert total == pytest.approx(100, abs=5)
+    plus_probability = len(results_plus)/200.
+    assert total == pytest.approx(200, abs=5)
     assert plus_probability == pytest.approx(1./4., abs = 1e-1), "Statistics on |+> probability are not correct (%f vs. %f)" % (plus_probability, 1./4.)
 
 

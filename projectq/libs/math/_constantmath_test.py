@@ -44,7 +44,7 @@ def no_math_emulation(eng, cmd):
         return True
     try:
         return len(cmd.gate.matrix) == 2
-    except:
+    except AttributeError:
         return False
 
 

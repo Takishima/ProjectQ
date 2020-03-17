@@ -38,9 +38,9 @@ def high_level_gates(eng, cmd):
     g = cmd.gate
     if eng.next_engine.is_available(cmd):
         return True
-    elif g == QFT or get_inverse(g) == QFT or g == Swap:
+    if g == QFT or get_inverse(g) == QFT or g == Swap:
         return True
-    elif isinstance(g, BasicMathGate):
+    if isinstance(g, BasicMathGate):
         return False
     return True
 
@@ -50,12 +50,11 @@ def one_and_two_qubit_gates(eng, cmd):
     if isinstance(cmd.gate, ClassicalInstructionGate):
         # This is required to allow Measure, Allocate, Deallocate, Flush
         return True
-    elif eng.next_engine.is_available(cmd):
+    if eng.next_engine.is_available(cmd):
         return True
-    elif len(all_qubits) <= 2:
+    if len(all_qubits) <= 2:
         return True
-    else:
-        return False
+    return False
 
 
 def default_chooser(cmd, decomposition_list):
@@ -181,24 +180,24 @@ def get_engine_list(one_qubit_gates="any",
         if isinstance(cmd.gate, ClassicalInstructionGate):
             # This is required to allow Measure, Allocate, Deallocate, Flush
             return True
-        elif one_qubit_gates == "any" and len(all_qubits) == 1:
+        if one_qubit_gates == "any" and len(all_qubits) == 1:
             return True
-        elif two_qubit_gates == "any" and len(all_qubits) == 2:
+        if two_qubit_gates == "any" and len(all_qubits) == 2:
             return True
-        elif isinstance(cmd.gate, allowed_gate_classes):
+        if isinstance(cmd.gate, allowed_gate_classes):
             return True
-        elif (cmd.gate, len(cmd.control_qubits)) in allowed_gate_instances:
+        if (cmd.gate, len(cmd.control_qubits)) in allowed_gate_instances:
             return True
-        elif (isinstance(cmd.gate, allowed_gate_classes1)
-              and len(all_qubits) == 1):
+        if (isinstance(cmd.gate, allowed_gate_classes1)
+                and len(all_qubits) == 1):
             return True
-        elif (isinstance(cmd.gate, allowed_gate_classes2)
-              and len(all_qubits) == 2):
+        if (isinstance(cmd.gate, allowed_gate_classes2)
+                and len(all_qubits) == 2):
             return True
-        elif cmd.gate in allowed_gate_instances1 and len(all_qubits) == 1:
+        if cmd.gate in allowed_gate_instances1 and len(all_qubits) == 1:
             return True
-        elif ((cmd.gate, len(cmd.control_qubits)) in allowed_gate_instances2
-              and len(all_qubits) == 2):
+        if ((cmd.gate, len(cmd.control_qubits)) in allowed_gate_instances2
+                and len(all_qubits) == 2):
             return True
         return False
 

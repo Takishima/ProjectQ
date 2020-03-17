@@ -22,15 +22,8 @@ import math
 import random
 from projectq.cengines import BasicEngine
 from projectq.meta import get_control_count, LogicalQubitIDTag
-from projectq.ops import (NOT,
-                          H,
-                          R,
-                          Measure,
-                          FlushGate,
-                          Allocate,
-                          Deallocate,
-                          BasicMathGate,
-                          TimeEvolution)
+from projectq.ops import (Measure, FlushGate, Allocate, Deallocate,
+                          BasicMathGate, TimeEvolution)
 from projectq.types import WeakQubitRef
 
 FALLBACK_TO_PYSIM = False
@@ -105,8 +98,7 @@ class Simulator(BasicEngine):
         """
         if (cmd.gate == Measure or cmd.gate == Allocate or
                 cmd.gate == Deallocate or
-                isinstance(cmd.gate, BasicMathGate) or
-                isinstance(cmd.gate, TimeEvolution)):
+                isinstance(cmd.gate, (BasicMathGate, TimeEvolution))):
             return True
         try:
             m = cmd.gate.matrix
@@ -114,7 +106,7 @@ class Simulator(BasicEngine):
             if len(m) > 2 ** 5:
                 return False
             return True
-        except:
+        except AttributeError:
             return False
 
     def _convert_logical_to_mapped_qureg(self, qureg):
@@ -136,8 +128,7 @@ class Simulator(BasicEngine):
                                          mapper.current_mapping[qubit.id])
                 mapped_qureg.append(new_qubit)
             return mapped_qureg
-        else:
-            return qureg
+        return qureg
 
     def get_expectation_value(self, qubit_operator, qureg):
         """
@@ -397,23 +388,28 @@ class Simulator(BasicEngine):
                     qubitids[-1].append(qb.id)
             if FALLBACK_TO_PYSIM:
                 math_fun = cmd.gate.get_math_function(cmd.qubits)
-                self._simulator.emulate_math(math_fun, qubitids,
-                                             [qb.id for qb in cmd.control_qubits])
+                self._simulator.emulate_math(
+                    math_fun, qubitids, [qb.id for qb in cmd.control_qubits])
             else:
-                # individual code for different standard gates to make it faster!
+                # Individual code for different standard gates to make it
+                # faster!
                 if isinstance(cmd.gate, AddConstant):
-                    self._simulator.emulate_math_addConstant(cmd.gate.a, qubitids,
-                                                             [qb.id for qb in cmd.control_qubits])
+                    self._simulator.emulate_math_addConstant(
+                        cmd.gate.a, qubitids,
+                        [qb.id for qb in cmd.control_qubits])
                 elif isinstance(cmd.gate, AddConstantModN):
-                    self._simulator.emulate_math_addConstantModN(cmd.gate.a, cmd.gate.N, qubitids,
-                                                                 [qb.id for qb in cmd.control_qubits])
+                    self._simulator.emulate_math_addConstantModN(
+                        cmd.gate.a, cmd.gate.N, qubitids,
+                        [qb.id for qb in cmd.control_qubits])
                 elif isinstance(cmd.gate, MultiplyByConstantModN):
-                    self._simulator.emulate_math_multiplyByConstantModN(cmd.gate.a, cmd.gate.N, qubitids,
-                                                                        [qb.id for qb in cmd.control_qubits])
+                    self._simulator.emulate_math_multiplyByConstantModN(
+                        cmd.gate.a, cmd.gate.N, qubitids,
+                        [qb.id for qb in cmd.control_qubits])
                 else:
                     math_fun = cmd.gate.get_math_function(cmd.qubits)
-                    self._simulator.emulate_math(math_fun, qubitids,
-                                                 [qb.id for qb in cmd.control_qubits])
+                    self._simulator.emulate_math(
+                        math_fun, qubitids,
+                        [qb.id for qb in cmd.control_qubits])
         elif isinstance(cmd.gate, TimeEvolution):
             op = [(list(term), coeff) for (term, coeff)
                   in cmd.gate.hamiltonian.terms.items()]

@@ -186,10 +186,7 @@ class GridMapper(BasicMapperEngine):
         num_qubits = 0
         for qureg in cmd.all_qubits:
             num_qubits += len(qureg)
-        if num_qubits <= 2:
-            return True
-        else:
-            return False
+        return (num_qubits <= 2)
 
     def _return_new_mapping(self):
         """
@@ -249,8 +246,7 @@ class GridMapper(BasicMapperEngine):
             element1.final_column = tmp_1
             element1.row_after_step_1 = tmp_2
             return swap_operation
-        else:
-            return None
+        return None
 
     def _sort_within_rows(self, final_positions, key):
         swap_operations = []
@@ -409,7 +405,8 @@ class GridMapper(BasicMapperEngine):
                     element = final_positions[row][column]
                     if element.row_after_step_1 is not None:
                         continue
-                    elif element.final_column == dest_column:
+
+                    if element.final_column == dest_column:
                         if best_element is None:
                             best_element = element
                         elif best_element.final_row > element.final_row:

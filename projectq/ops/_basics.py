@@ -214,10 +214,9 @@ class BasicGate(object):
         """
         if isinstance(other, self.__class__):
             return True
-        elif isinstance(other, MatrixGate):
+        if isinstance(other, MatrixGate):
             return NotImplemented
-        else:
-            return False
+        return False
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -393,8 +392,7 @@ class BasicRotationGate(BasicGate):
         """
         if self.angle == 0:
             return self.__class__(0)
-        else:
-            return self.__class__(-self.angle + 4 * math.pi)
+        return self.__class__(-self.angle + 4 * math.pi)
 
     def get_merged(self, other):
         """
@@ -421,8 +419,7 @@ class BasicRotationGate(BasicGate):
         """ Return True if same class and same rotation angle. """
         if isinstance(other, self.__class__):
             return self.angle == other.angle
-        else:
-            return False
+        return False
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -491,8 +488,7 @@ class BasicPhaseGate(BasicGate):
         """
         if self.angle == 0:
             return self.__class__(0)
-        else:
-            return self.__class__(-self.angle + 2 * math.pi)
+        return self.__class__(-self.angle + 2 * math.pi)
 
     def get_merged(self, other):
         """
@@ -519,8 +515,7 @@ class BasicPhaseGate(BasicGate):
         """ Return True if same class and same rotation angle. """
         if isinstance(other, self.__class__):
             return self.angle == other.angle
-        else:
-            return False
+        return False
 
     def __ne__(self, other):
         return not self.__eq__(other)

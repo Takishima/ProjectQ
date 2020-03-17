@@ -15,7 +15,6 @@
 from projectq.ops import Allocate, Deallocate
 from projectq.types import Qubit, Qureg
 from projectq.ops import Command
-import projectq.cengines
 
 
 class LastEngineException(Exception):
@@ -79,8 +78,7 @@ class BasicEngine(object):
         """
         if not self.is_last_engine:
             return self.next_engine.is_available(cmd)
-        else:
-            raise LastEngineException(self)
+        raise LastEngineException(self)
 
     def allocate_qubit(self, dirty=False):
         """
@@ -175,7 +173,7 @@ class BasicEngine(object):
                 except AttributeError:
                     pass
                 engine = engine.next_engine
-        except:
+        except AttributeError:
             return False
 
     def send(self, command_list):

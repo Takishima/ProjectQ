@@ -281,7 +281,7 @@ def _footer(settings):
     Returns:
         tex_footer_str (string): Latex document footer.
     """
-    return "\n\n\\end{tikzpicture}\n\\end{document}"
+    return r"\n\n\end{tikzpicture}\n\end{document}"
 
 
 class _Circ2Tikz(object):
@@ -409,14 +409,14 @@ class _Circ2Tikz(object):
                     self.is_quantum[l] = False
             elif gate == Allocate:
                 # draw 'begin line'
-                add_str = "\n\\node[none] ({}) at ({},-{}) {{$\\Ket{{0}}{}$}};"
+                add_str = r"\n\node[none] ({}) at ({},-{}) {{$\Ket{{0}}{}$}};"
                 id_str = ""
                 if self.settings['gates']['AllocateQubitGate']['draw_id']:
                     id_str = "^{{\\textcolor{{red}}{{{}}}}}".format(cmds[i].id)
                 xpos = self.pos[line]
                 try:
                     if (self.settings['gates']['AllocateQubitGate']
-                        ['allocate_at_zero']):
+                            ['allocate_at_zero']):
                         self.pos[line] -= self._gate_pre_offset(gate)
                         xpos = self._gate_pre_offset(gate)
                 except KeyError:
@@ -452,9 +452,9 @@ class _Circ2Tikz(object):
                 tikz_code.append(connections)
 
             if not draw_gates_in_parallel:
-                for l in range(len(self.pos)):
-                    if l != line:
-                        self.pos[l] = self.pos[line]
+                for idx in range(len(self.pos)):
+                    if idx != line:
+                        self.pos[idx] = self.pos[line]
 
         circuit[line] = circuit[line][end:]
         return "".join(tikz_code)
@@ -522,11 +522,9 @@ class _Circ2Tikz(object):
         op_mid = "line{}_gate{}".format('{}-{}'.format(*lines),
                                         self.op_count[lines[0]])
         gate_str += ("\n\\node[xstyle] ({op}) at ({pos},-{line})\
-                {{\\scriptsize $\\frac{{1}}{{2}}{dagger}$}};").format(
-            op=op_mid,
-            line=midpoint,
-            pos=pos,
-            dagger='^{{\\dagger}}' if daggered else '')
+                {{\\scriptsize $\\frac{{1}}{{2}}{dagger}$}};"
+                     ).format(op=op_mid, line=midpoint, pos=pos,
+                              dagger=r'^{{\dagger}}' if daggered else '')
 
         # add two vertical lines to connect circled 1/2
         gate_str += "\n\\draw ({}) edge[edgestyle] ({});".format(
@@ -795,25 +793,25 @@ class _Circ2Tikz(object):
 
         if quantum:
             return "\n\\draw ({}) edge[edgestyle] ({});".format(op1, op2)
-        else:
-            if p2 > p1:
-                loc1, loc2 = loc2, loc1
-            edge_str = ("\n\\draw ([{shift}]{op1}.{loc1}) edge[edgestyle] "
-                        "([{shift}]{op2}.{loc2});")
-            line_sep = self.settings['lines']['double_lines_sep']
-            shift1 = shift.format(line_sep / 2.)
-            shift2 = shift.format(-line_sep / 2.)
-            edges_str = edge_str.format(shift=shift1,
-                                        op1=op1,
-                                        op2=op2,
-                                        loc1=loc1,
-                                        loc2=loc2)
-            edges_str += edge_str.format(shift=shift2,
-                                         op1=op1,
-                                         op2=op2,
-                                         loc1=loc1,
-                                         loc2=loc2)
-            return edges_str
+
+        if p2 > p1:
+            loc1, loc2 = loc2, loc1
+        edge_str = ("\n\\draw ([{shift}]{op1}.{loc1}) edge[edgestyle] "
+                    "([{shift}]{op2}.{loc2});")
+        line_sep = self.settings['lines']['double_lines_sep']
+        shift1 = shift.format(line_sep / 2.)
+        shift2 = shift.format(-line_sep / 2.)
+        edges_str = edge_str.format(shift=shift1,
+                                    op1=op1,
+                                    op2=op2,
+                                    loc1=loc1,
+                                    loc2=loc2)
+        edges_str += edge_str.format(shift=shift2,
+                                     op1=op1,
+                                     op2=op2,
+                                     loc1=loc1,
+                                     loc2=loc2)
+        return edges_str
 
     def _regular_gate(self, gate, lines, ctrl_lines):
         """

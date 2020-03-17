@@ -55,8 +55,7 @@ class ClassicalSimulator(BasicEngine):
                                    "eng.flush().")
             return WeakQubitRef(qubit.engine,
                                 mapper.current_mapping[qubit.id])
-        else:
-            return qubit
+        return qubit
 
     def read_bit(self, qubit):
         """
@@ -180,9 +179,7 @@ class ClassicalSimulator(BasicEngine):
         return (cmd.gate == Measure or
                 cmd.gate == Allocate or
                 cmd.gate == Deallocate or
-                isinstance(cmd.gate, BasicMathGate) or
-                isinstance(cmd.gate, FlushGate) or
-                isinstance(cmd.gate, XGate))
+                isinstance(cmd.gate, (BasicMathGate, FlushGate, XGate)))
 
     def receive(self, command_list):
         for cmd in command_list:
