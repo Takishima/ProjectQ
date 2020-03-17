@@ -1,4 +1,4 @@
-#   Copyright 2017 ProjectQ-Framework (www.projectq.ch)
+#   Copyright 2020 ProjectQ-Framework (www.projectq.ch)
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -12,3 +12,9 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+"""
+Contains a function to plot measurement outcome probabilities
+as a histogram for the simulator
+"""
+
+from ._histogram import histogram
