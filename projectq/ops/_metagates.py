@@ -309,3 +309,6 @@ class Tensor(BasicGate):
 
 #: Shortcut (instance of) :class:`projectq.ops.Tensor`
 All = Tensor
+
+
+all_defined_symbols = [get_inverse, C, is_identity]

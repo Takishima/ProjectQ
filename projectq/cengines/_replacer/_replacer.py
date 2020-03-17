@@ -173,6 +173,10 @@ class AutoReplacer(BasicEngine):
                 raise NoGateDecompositionError("\nNo replacement found for " +
                                                str(cmd) + "!")
 
+            # Basic sort of rules based on their priority
+            decomp_list.sort(key=lambda rule: rule.priority,
+                             reverse=True)
+
             # use decomposition chooser to determine the best decomposition
             chosen_decomp = self._decomp_chooser(cmd, decomp_list)
             # the decomposed command must have the same tags

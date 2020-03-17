@@ -24,7 +24,7 @@ from projectq.backends import Simulator
 from projectq.ops import (AllocateQubitGate, DeallocateQubitGate, FlushGate,
                           H, X)
 
-from projectq.cengines import _main
+from . import _main
 
 
 def test_main_engine_init():

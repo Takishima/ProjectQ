@@ -12,23 +12,47 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from ._basics import (BasicEngine,
-                      LastEngineException,
-                      ForwarderEngine)
-from ._cmdmodifier import CommandModifier
-from ._basicmapper import BasicMapperEngine
-from ._ibm5qubitmapper import IBM5QubitMapper
-from ._swapandcnotflipper import SwapAndCNOTFlipper
-from ._linearmapper import LinearMapper, return_swap_depth
-from ._manualmapper import ManualMapper
-from ._main import (MainEngine,
-                    NotYetMeasuredError,
-                    UnsupportedEngineError)
-from ._optimize import LocalOptimizer
-from ._replacer import (AutoReplacer,
-                        InstructionFilter,
-                        DecompositionRuleSet,
-                        DecompositionRule)
-from ._tagremover import TagRemover
-from ._testengine import CompareEngine, DummyEngine
-from ._twodmapper import GridMapper
+import sys
+import inspect
+import pkgutil
+from importlib import import_module
+
+from ._core import *
+
+
+def dynamic_import(name):
+    imported_module = import_module('.' + name, package=__name__)
+
+    for attr_name in dir(imported_module):
+        module_attr = getattr(imported_module, attr_name)
+
+        # Only automatically import classes that derive from BasicEngine or
+        # Exception and that have not already been imported and avoid
+        # importing classes from other ProjectQ submodules
+        if (inspect.isclass(module_attr)
+                and issubclass(module_attr, (BasicEngine, Exception))
+                and not hasattr(sys.modules[__name__], attr_name)
+                and __name__ in module_attr.__module__):
+            setattr(sys.modules[__name__], attr_name, module_attr)
+
+        # If present, import all symbols from the 'all_defined_symbols' list
+        if attr_name == 'all_defined_symbols':
+            for symbol in module_attr:
+                if not hasattr(sys.modules[__name__], symbol.__name__):
+                    setattr(sys.modules[__name__], symbol.__name__, symbol)
+
+
+# Allow extending this namespace.
+__path__ = pkgutil.extend_path(__path__, __name__)
+
+_failed_list = []
+for (_, name, _) in pkgutil.iter_modules(path=__path__):
+    if name.endswith('test') or name == '_core':
+        continue
+    try:
+        dynamic_import(name)
+    except ImportError:
+        _failed_list.append(name)
+
+for name in _failed_list:
+    dynamic_import(name)

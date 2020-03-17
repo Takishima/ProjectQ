@@ -12,58 +12,16 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from . import (arb1qubit2rzandry,
-               barrier,
-               carb1qubit2cnotrzandry,
-               crz2cxandrz,
-               cnot2rxx,
-               cnot2cz,
-               cnu2toffoliandcu,
-               entangle,
-               globalphase,
-               h2rx,
-               ph2r,
-               qubitop2onequbit,
-               qft2crandhadamard,
-               r2rzandph,
-               rx2rz,
-               ry2rz,
-               rz2rx,
-               sqrtswap2cnot,
-               stateprep2cnot,
-               swap2cnot,
-               toffoli2cnotandtgate,
-               time_evolution,
-               uniformlycontrolledr2cnot,
-               phaseestimation,
-               amplitudeamplification)
+import os
+import pkgutil
+import sys
+from importlib import import_module
 
-all_defined_decomposition_rules = [
-    rule
-    for module in [arb1qubit2rzandry,
-                   barrier,
-                   carb1qubit2cnotrzandry,
-                   crz2cxandrz,
-                   cnot2rxx,
-                   cnot2cz,
-                   cnu2toffoliandcu,
-                   entangle,
-                   globalphase,
-                   h2rx,
-                   ph2r,
-                   qubitop2onequbit,
-                   qft2crandhadamard,
-                   r2rzandph,
-                   rx2rz,
-                   ry2rz,
-                   rz2rx,
-                   sqrtswap2cnot,
-                   stateprep2cnot,
-                   swap2cnot,
-                   toffoli2cnotandtgate,
-                   time_evolution,
-                   uniformlycontrolledr2cnot,
-                   phaseestimation,
-                   amplitudeamplification]
-    for rule in module.all_defined_decomposition_rules
-]
+all_defined_decomposition_rules = []
+for (_, name, _) in pkgutil.iter_modules([os.path.dirname(__file__)]):
+    if name.endswith('test'):
+        continue
+    imported_module = import_module('.' + name, package=__name__)
+    setattr(sys.modules[__name__], name, imported_module)
+    all_defined_decomposition_rules.extend(
+        imported_module.all_defined_decomposition_rules)

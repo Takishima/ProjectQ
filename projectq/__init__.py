@@ -11,7 +11,6 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
 """
 ProjectQ - An open source software framework for quantum computing
 
@@ -24,6 +23,9 @@ Get started:
     or run on the IBM backend), Teleportation, Grover search, and
     Shor's algorithm for factoring.
 """
+
+# Allow extending this namespace.
+__path__ = __import__('pkgutil').extend_path(__path__, __name__)
 
 from ._version import __version__
 from projectq.cengines import MainEngine

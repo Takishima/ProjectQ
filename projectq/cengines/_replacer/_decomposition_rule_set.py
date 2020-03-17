@@ -49,7 +49,8 @@ class DecompositionRuleSet:
         Args:
             rule (DecompositionRuleGate): The decomposition rule to add.
         """
-        decomp_obj = _Decomposition(rule.gate_decomposer, rule.gate_recognizer)
+        decomp_obj = _Decomposition(rule.gate_decomposer, rule.gate_recognizer,
+                                    rule.rule_priority)
         cls = rule.gate_class.__name__
         if cls not in self.decompositions:
             self.decompositions[cls] = []
@@ -75,7 +76,7 @@ class _Decomposition(object):
     The Decomposition class can be used to register a decomposition rule (by
     calling register_decomposition)
     """
-    def __init__(self, replacement_fun, recogn_fun):
+    def __init__(self, replacement_fun, recogn_fun, priority):
         """
         Construct the Decomposition object.
 
@@ -117,6 +118,7 @@ class _Decomposition(object):
         """
         self.decompose = replacement_fun
         self.check = recogn_fun
+        self.priority = priority
 
     def get_inverse_decomposition(self):
         """
@@ -139,4 +141,4 @@ class _Decomposition(object):
         def recogn(cmd):
             return self.check(cmd.get_inverse())
 
-        return _Decomposition(decomp, recogn)
+        return _Decomposition(decomp, recogn, self.priority)

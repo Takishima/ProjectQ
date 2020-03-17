@@ -11,7 +11,6 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
 """
 Contains back-ends for ProjectQ.
 
@@ -25,8 +24,29 @@ This includes:
   circuit)
 * an interface to the IBM Quantum Experience chip (and simulator).
 """
-from ._printer import CommandPrinter
-from ._circuits import CircuitDrawer, CircuitDrawerMatplotlib
-from ._sim import Simulator, ClassicalSimulator
-from ._resource import ResourceCounter
-from ._ibm import IBMBackend
+import sys
+import inspect
+import pkgutil
+from importlib import import_module
+
+# Allow extending this namespace.
+__path__ = __import__('pkgutil').extend_path(__path__, __name__)
+
+from projectq.cengines import BasicEngine
+
+for (_, name, _) in pkgutil.iter_modules(path=__path__):
+    if name.endswith('test'):
+        continue
+
+    imported_module = import_module('.' + name, package=__name__)
+    for attr_name in dir(imported_module):
+        module_attr = getattr(imported_module, attr_name)
+
+        # Only automatically import classes that derive from BasicEngine and
+        # that have not already been imported and avoid importing classes from
+        # other ProjectQ submodules
+        if (inspect.isclass(module_attr)
+                and issubclass(module_attr, BasicEngine)
+                and not hasattr(sys.modules[__name__], attr_name)
+                and __name__ in module_attr.__module__):
+            setattr(sys.modules[__name__], attr_name, module_attr)

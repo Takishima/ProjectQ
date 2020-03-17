@@ -21,7 +21,7 @@ logical qubit ids to mapped ids.
 """
 from copy import deepcopy
 
-from projectq.cengines import BasicEngine, CommandModifier
+from . import BasicEngine, CommandModifier
 from projectq.meta import drop_engine_after, insert_engine, LogicalQubitIDTag
 from projectq.ops import MeasureGate
 

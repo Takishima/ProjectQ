@@ -21,10 +21,10 @@ import sys
 import traceback
 import weakref
 
-from projectq.cengines import BasicEngine, BasicMapperEngine
 from projectq.ops import Command, FlushGate
 from projectq.types import WeakQubitRef
 from projectq.backends import Simulator
+from . import BasicEngine, BasicMapperEngine
 
 
 class NotYetMeasuredError(Exception):
@@ -301,3 +301,7 @@ class MainEngine(BasicEngine):
                 qb = self.active_qubits.pop()
                 qb.__del__()
         self.receive([Command(self, FlushGate(), ([WeakQubitRef(self, -1)],))])
+
+
+#: Symbols to automatically export
+all_defined_symbols = [NotYetMeasuredError, UnsupportedEngineError]

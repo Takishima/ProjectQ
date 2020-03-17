@@ -1,4 +1,4 @@
-#   Copyright 2017 ProjectQ-Framework (www.projectq.ch)
+#   Copyright 2020 ProjectQ-Framework (www.projectq.ch)
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -12,12 +12,13 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from ._decomposition_rule import DecompositionRule, ThisIsNotAGateClassError
-from ._decomposition_rule_set import DecompositionRuleSet
-from ._replacer import (AutoReplacer,
-                        InstructionFilter,
-                        NoGateDecompositionError)
+from . import return_swap_depth
 
 
-#: Symbols to automatically export
-all_defined_symbols = [DecompositionRule, DecompositionRuleSet]
+def test_return_swap_depth():
+    swaps = []
+    assert return_swap_depth(swaps) == 0
+    swaps += [(0, 1), (0, 1), (1, 2)]
+    assert return_swap_depth(swaps) == 3
+    swaps.append((2, 3))
+    assert return_swap_depth(swaps) == 4
