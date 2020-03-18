@@ -16,6 +16,9 @@ import inspect
 import pkgutil
 from importlib import import_module
 
+# Allow extending this namespace.
+__path__ = pkgutil.extend_path(__path__, __name__)
+
 from ._core import (BasicEngine, LastEngineException, ForwarderEngine,
                     BasicEngine, LastEngineException, CommandModifier,
                     BasicMapperEngine, MainEngine, NotYetMeasuredError,
@@ -42,9 +45,6 @@ def dynamic_import(name):
             for symbol in module_attr:
                 globals()[symbol.__name__] = symbol
 
-
-# Allow extending this namespace.
-__path__ = pkgutil.extend_path(__path__, __name__)
 
 _failed_list = []
 for (_, pkg_name, _) in pkgutil.iter_modules(path=__path__):
