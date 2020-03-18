@@ -34,11 +34,10 @@ __path__ = __import__('pkgutil').extend_path(__path__, __name__)
 
 from projectq.cengines import BasicEngine
 
-for (_, name, _) in pkgutil.iter_modules(path=__path__):
-    if name.endswith('test'):
-        continue
 
+def dynamic_import(name):
     imported_module = import_module('.' + name, package=__name__)
+
     for attr_name in dir(imported_module):
         module_attr = getattr(imported_module, attr_name)
 
@@ -47,6 +46,19 @@ for (_, name, _) in pkgutil.iter_modules(path=__path__):
         # other ProjectQ submodules
         if (inspect.isclass(module_attr)
                 and issubclass(module_attr, BasicEngine)
-                and not hasattr(sys.modules[__name__], attr_name)
+                and attr_name not in globals()
                 and __name__ in module_attr.__module__):
             globals()[attr_name] = module_attr
+
+
+_failed_list = []
+for (_, pkg_name, _) in pkgutil.iter_modules(path=__path__):
+    if pkg_name.endswith('test'):
+        continue
+    try:
+        dynamic_import(pkg_name)
+    except ImportError:
+        _failed_list.append(pkg_name)
+
+for pkg_name in _failed_list:
+    dynamic_import(pkg_name)
