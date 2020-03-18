@@ -54,13 +54,13 @@ def dynamic_import(name):
 __path__ = pkgutil.extend_path(__path__, __name__)
 
 _failed_list = []
-for (_, name, _) in pkgutil.iter_modules(path=__path__):
-    if name.endswith('test') or name == '_basics':
+for (_, pkg_name, _) in pkgutil.iter_modules(path=__path__):
+    if pkg_name.endswith('test') or pkg_name == '_basics':
         continue
     try:
-        dynamic_import(name)
+        dynamic_import(pkg_name)
     except ImportError:
-        _failed_list.append(name)
+        _failed_list.append(pkg_name)
 
-for name in _failed_list:
-    dynamic_import(name)
+for pkg_name in _failed_list:
+    dynamic_import(pkg_name)
