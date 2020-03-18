@@ -49,4 +49,4 @@ for (_, name, _) in pkgutil.iter_modules(path=__path__):
                 and issubclass(module_attr, BasicEngine)
                 and not hasattr(sys.modules[__name__], attr_name)
                 and __name__ in module_attr.__module__):
-            setattr(sys.modules[__name__], attr_name, module_attr)
+            globals()[attr_name] = module_attr
