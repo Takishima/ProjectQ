@@ -12,7 +12,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-import sys
 import inspect
 import pkgutil
 from importlib import import_module
@@ -38,18 +37,17 @@ def dynamic_import(name):
         # Only automatically import classes that derive from BasicGate or
         # Exception and that have not already been imported and avoid
         # importing classes from other ProjectQ submodules
-        if (not hasattr(sys.modules[__name__], attr_name)
+        if (attr_name not in globals()
                 and (inspect.isclass(module_attr)
                      and issubclass(module_attr, (BasicGate, Exception))
                      or isinstance(module_attr, BasicGate))
                 and __name__ in module_attr.__module__):
-            setattr(sys.modules[__name__], attr_name, module_attr)
+            globals()[attr_name] = module_attr
 
         # If present, import all symbols from the 'all_defined_symbols' list
         if attr_name == 'all_defined_symbols':
             for symbol in module_attr:
-                if not hasattr(sys.modules[__name__], symbol.__name__):
-                    setattr(sys.modules[__name__], symbol.__name__, symbol)
+                globals()[symbol.__name__] = symbol
 
 
 # Allow extending this namespace.
