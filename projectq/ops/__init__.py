@@ -12,7 +12,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-import sys
 import inspect
 import pkgutil
 from importlib import import_module
@@ -38,31 +37,30 @@ def dynamic_import(name):
         # Only automatically import classes that derive from BasicGate or
         # Exception and that have not already been imported and avoid
         # importing classes from other ProjectQ submodules
-        if (not hasattr(sys.modules[__name__], attr_name)
+        if (attr_name not in globals()
                 and (inspect.isclass(module_attr)
                      and issubclass(module_attr, (BasicGate, Exception))
                      or isinstance(module_attr, BasicGate))
                 and __name__ in module_attr.__module__):
-            setattr(sys.modules[__name__], attr_name, module_attr)
+            globals()[attr_name] = module_attr
 
         # If present, import all symbols from the 'all_defined_symbols' list
         if attr_name == 'all_defined_symbols':
             for symbol in module_attr:
-                if not hasattr(sys.modules[__name__], symbol.__name__):
-                    setattr(sys.modules[__name__], symbol.__name__, symbol)
+                globals()[symbol.__name__] = symbol
 
 
 # Allow extending this namespace.
 __path__ = pkgutil.extend_path(__path__, __name__)
 
 _failed_list = []
-for (_, name, _) in pkgutil.iter_modules(path=__path__):
-    if name.endswith('test') or name == '_basics':
+for (_, pkg_name, _) in pkgutil.iter_modules(path=__path__):
+    if pkg_name.endswith('test') or pkg_name == '_basics':
         continue
     try:
-        dynamic_import(name)
+        dynamic_import(pkg_name)
     except ImportError:
-        _failed_list.append(name)
+        _failed_list.append(pkg_name)
 
-for name in _failed_list:
-    dynamic_import(name)
+for pkg_name in _failed_list:
+    dynamic_import(pkg_name)
