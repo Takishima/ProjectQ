@@ -184,6 +184,8 @@ exec(open('projectq/_version.py').read())
 # Readme file as long_description:
 long_description = open('README.rst').read()
 
+long_description += open('CHANGELOG.rst').read()
+
 # Read in requirements.txt
 with open('requirements.txt', 'r') as f_requirements:
     requirements = f_requirements.readlines()
