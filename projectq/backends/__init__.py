@@ -23,6 +23,7 @@ This includes:
 * a resource counter (counts gates and keeps track of the maximal width of the
   circuit)
 * an interface to the IBM Quantum Experience chip (and simulator).
+* an interface to the AQT trapped ion system (and simulator).
 """
 import sys
 import inspect
