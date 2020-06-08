@@ -263,6 +263,8 @@ class BuildExt(build_ext):
         self._configure_intrinsics()
         status_msgs('Configuring C++ standard')
         self._configure_cxx_standard()
+        status_msgs('Configuring other compiler flags')
+        self._configure_other_flags()
 
         # ------------------------------
         # Other compiler tests
@@ -344,23 +346,41 @@ class BuildExt(build_ext):
         important_msgs('WARNING: compiler does not support OpenMP!')
 
     def _configure_intrinsics(self):
-        for flag in [
-                '-march=native', '-mavx2', '/arch:AVX2', '/arch:CORE-AVX2',
-                '/arch:AVX'
-        ]:
-            if compiler_test(
-                    self.compiler,
-                    flagname=flag,
-                    link=False,
-                    include='#include <immintrin.h>',
-                    body='__m256d neg = _mm256_set1_pd(1.0); (void)neg;'):
+        is_aarch64 = platform.machine() == 'aarch64'
+        is_x86_64 = platform.machine() == 'x86_64'
+        flags = ['-march=native']
+        if is_aarch64:
+            flags += [
+                '-march=armv8.5-a', '-march=armv8.4-a', '-march=armv8.3-a',
+                '-march=armv8.2-a'
+            ]
+            include_fname = 'arm_neon.h'
+            body = ('float64x2_t neg = vdupq_n_f64(1.); (void) neg;\n'
+                    'double tmp[] = {1, 1, 1, 1}; auto p = vld1q_f64_x2(tmp);'
+                    ' (void) p;')
+        elif is_x86_64:
+            flags += ['-mavx2', '/arch:AVX2', '/arch:CORE-AVX2', '/arch:AVX']
+            include_fname = 'immintrin.h'
+            body = '__m256d neg = _mm256_set1_pd(1.0); (void)neg;'
+        else:
+            important_msgs('WARNING: Unsupported architecture ({})!'
+                           ' Compiler intrinsics disabled.'.format(
+                               platform.machine()))
+            return
 
+        for flag in flags:
+            if compiler_test(self.compiler,
+                             flagname=flag,
+                             link=False,
+                             include='#include <{}>'.format(include_fname),
+                             body=body):
                 if sys.platform == 'win32':
                     self.opts.extend(('/DINTRIN', flag))
                 else:
                     self.opts.extend(('-DINTRIN', flag))
-                break
+                return
 
+    def _configure_other_flags(self):
         for flag in ['-ffast-math', '-fast', '/fast', '/fp:precise']:
             if compiler_test(self.compiler, flagname=flag):
                 self.opts.append(flag)
@@ -370,7 +390,7 @@ class BuildExt(build_ext):
         if self.compiler.compiler_type == 'msvc':
             return
 
-        cxx_standards = [17, 14, 11]
+        cxx_standards = [17, 14]
         if sys.version_info[0] < 3:
             cxx_standards = [year for year in cxx_standards if year < 17]
 
@@ -391,7 +411,7 @@ class BuildExt(build_ext):
                 self.opts.append(flag)
                 return
 
-        important_msgs('ERROR: compiler needs to have at least C++11 support!')
+        important_msgs('ERROR: compiler needs to have at least C++14 support!')
         raise BuildFailed()
 
 
@@ -445,14 +465,16 @@ def run_setup(with_cext):
         url='http://www.projectq.ch',
         project_urls={
             'Documentation': 'https://projectq.readthedocs.io/en/latest/',
-            'Issue Tracker':
-            'https://github.com/ProjectQ-Framework/ProjectQ/',
+            'Issue Tracker': 'https://github.com/ProjectQ-Framework/ProjectQ/',
         },
         description=('ProjectQ - An open source software framework for '
                      'quantum computing'),
         long_description=long_description,
         install_requires=requirements,
-        cmdclass={'build_ext': BuildExt, 'egg_info': EggInfo},
+        cmdclass={
+            'build_ext': BuildExt,
+            'egg_info': EggInfo
+        },
         zip_safe=False,
         license='Apache 2',
         packages=setuptools.find_packages(),
