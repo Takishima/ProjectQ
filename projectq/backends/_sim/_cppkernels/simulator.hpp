@@ -19,9 +19,15 @@
 #include <complex>
 
 #if defined(NOINTRIN) || !defined(INTRIN)
-#include "nointrin/kernels.hpp"
+#     include "nointrin/kernels.hpp"
 #else
-#include "intrin/kernels.hpp"
+#     if defined __aarch64__
+#          include "neon/kernels.hpp"
+#     elif defined __AVX2__
+#          include "intrin/kernels.hpp"
+#     else
+#          error Unsupported compiler intrinsics
+#     endif  // __aarch64__ || __AVX2__
 #endif
 
 #include "intrin/alignedallocator.hpp"
