@@ -6,6 +6,10 @@ include README.rst
 include CHANGELOG.rst
 include requirements.txt
 include setup.py
+include _py_setup.py
+include _cmake_setup.py
+CMakeLists.txt
+recursive-include cmake *.cmake
 
 recursive-include projectq *.py *.hpp *.cpp
 global-exclude *_test.py
