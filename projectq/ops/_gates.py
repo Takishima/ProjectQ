@@ -1,4 +1,4 @@
-#   Copyright 2017 ProjectQ-Framework (www.projectq.ch)
+#   Copyright 2020 ProjectQ-Framework (www.projectq.ch)
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -52,6 +52,7 @@ from ._basics import (BasicGate,
                       MatrixGate,
                       SelfInverseGate,
                       BasicRotationGate,
+                      U3Gate,
                       BasicPhaseGate,
                       ClassicalInstructionGate,
                       FastForwardingGate,
@@ -244,6 +245,18 @@ class Rz(BasicRotationGate):
         return np.matrix([[cmath.exp(-.5 * 1j * self.angle), 0],
                           [0, cmath.exp(.5 * 1j * self.angle)]])
 
+
+class U3(U3Gate):
+    @property
+    def matrix(self):
+        return np.matrix([[cmath.exp(-.5j * (self.phi + self.lamda)) + math.cos(.5* self.theta),
+                           -cmath.exp(-.5j * (self.phi - self.lamda)) + math.sin(.5* self.theta)],
+                          [cmath.exp(.5j * (self.phi - self.lamda)) + math.sin(.5* self.theta),
+                           cmath.exp(.5j * (self.phi + self.lamda)) + math.cos(.5* self.theta)]])
+
+class U2(U3):
+    def __init__(self, phi, lamda):
+        super().__init__(math.pi/2, phi, lamda)
 
 class Rxx(BasicRotationGate):
     """ RotationXX gate class """
